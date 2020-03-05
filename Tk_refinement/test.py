@@ -11,8 +11,10 @@ def derivative2(x):
 def iterations(start, interval_end, step, eps):
     def refinement(a, b, eps):
         nonlocal segment, itrs, round_to
-        delta_x = eps + 1.0
         segment += 1
+        
+        
+
         if derivative2(a) * f(a) > 0.0:
             x0 = a
             x = x0 + eps
@@ -27,7 +29,7 @@ def iterations(start, interval_end, step, eps):
             itrs += 1
             delta_x = f(x) * (x - x0) / (f(x) - f(x0))
             x -= delta_x
-
+        
         return x
 
     end = start + step
@@ -40,18 +42,18 @@ def iterations(start, interval_end, step, eps):
             flag = False
             continue
         itrs = 0
-        if abs(f(end)) < eps:
-            segment += 1
-            flag = True
-            results += [{'number': segment, 'start': round(start, round_to + 1),
-                        'end': round(end, round_to + 1), 'root': end,
-                        'itrs': itrs}]
-        if abs(f(start)) < eps:
-            segment += 1
-            flag = True
-            results += [{'number': segment, 'start': round(start, round_to + 1),
-                        'end': round(end, round_to + 1), 'root': start,
-                        'itrs': itrs}]
+        # if abs(f(end)) < eps:
+        #     segment += 1
+        #     flag = True
+        #     results += [{'number': segment, 'start': round(start, round_to + 1),
+        #                 'end': round(end, round_to + 1), 'root': end,
+        #                 'itrs': itrs}]
+        # if abs(f(start)) < eps:
+        #     segment += 1
+        #     flag = True
+        #     results += [{'number': segment, 'start': round(start, round_to + 1),
+        #                 'end': round(end, round_to + 1), 'root': start,
+        #                 'itrs': itrs}]
         if f(start) * f(end) < 0.0:
             root = refinement(start, end, eps)
             results += [{'number': segment, 'start': round(start, round_to + 1),
