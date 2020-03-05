@@ -11,7 +11,20 @@ def d2(x):
 
 def iterations(start, interval_end, step, eps):
     def refinement(a, b, eps):
-
+        def error(a, b):
+            c = b - eps
+            if f(a) * d2(a) < 0.0:
+                x = a
+            elif f(b) * d2(b) < 0.0:
+                x = b
+            delta = eps + 1.0
+            itrs = 0
+            while abs(delta) > eps:
+                itrs += 1
+                delta = f(x) * (x - c) / (f(x) - f(c))
+                x -= delta
+            return x, itrs
+        
         if abs(f(a)) < eps:
             return a, 0
         if abs(f(b)) < eps:
@@ -35,7 +48,8 @@ def iterations(start, interval_end, step, eps):
             itrs += 1
             delta = f(x) * (x - c) / (f(x) - f(c))
             x -= delta
-
+            if itrs > 100:
+                return error(a, b)
         return x, itrs
 
     end = start + step
@@ -64,12 +78,19 @@ def iterations(start, interval_end, step, eps):
 # step = float(input("Step: "))
 # eps = float(input("Eps: "))
 
-start = 1
-interval_end = 5
-step = 4
-eps = 1e-3
+start = -1
+interval_end = 10
+step = 3
+eps = 1e-4
 
 results = iterations(start, interval_end, step, eps)
+i = 0
+length = len(results)
+while i < length - 1:
+    if abs(results[i]['root'] - results[i + 1]['root']) < eps:
+        results.pop(i + 1)
+        length -= 1
+    i += 1
 
 for i in results:
     print(i)
