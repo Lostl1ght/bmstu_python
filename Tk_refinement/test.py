@@ -1,75 +1,53 @@
 from math import sin, floor, log10
 
+
 def f(x):
-    return sin(x)
+    return sin(x) #x * x - 2
 
 
-def derivative2(x):
-    return -sin(x)
+def d2(x):
+    return -sin(x) #2
 
 
 def iterations(start, interval_end, step, eps):
     def refinement(a, b, eps):
-        nonlocal segment, itrs, round_to
-        segment += 1
-        
-        
 
-        if derivative2(a) * f(a) > 0.0:
-            x0 = a
-            x = x0 + eps
-        elif derivative2(b) * f(b) > 0.0:
-            x0 = b
-            x = x0 - eps
+        if abs(f(a)) < eps:
+            return a
+        if abs(f(b)) < eps:
+            return b
+
+        if f(a) * d2(a) > 0.0:
+            c = a
+        elif f(b) * d2(b) > 0.0:
+            c = b
         else:
-            x0 = (a + b) / 2
-            x = x0 - 0.1
+            c = (a + b) / 2
 
-        while abs(delta_x) > eps:
-            itrs += 1
-            delta_x = f(x) * (x - x0) / (f(x) - f(x0))
-            x -= delta_x
-        
+        if f(a) * d2(a) < 0.0:
+            x = a
+        elif f(b) * d2(b) < 0.0:
+            x = b
+
+        delta = eps + 1.0
+
+        while abs(delta) > eps:
+            delta = f(x) * (x - c) / (f(x) - f(c))
+            x -= delta
+
         return x
 
     end = start + step
     results = []
-    segment = 0
-    round_to = abs(int(floor(log10(eps))))
-    flag = False
-    while end <= interval_end:
-        if flag:
-            flag = False
-            continue
+    while end < interval_end:
         itrs = 0
-        # if abs(f(end)) < eps:
-        #     segment += 1
-        #     flag = True
-        #     results += [{'number': segment, 'start': round(start, round_to + 1),
-        #                 'end': round(end, round_to + 1), 'root': end,
-        #                 'itrs': itrs}]
-        # if abs(f(start)) < eps:
-        #     segment += 1
-        #     flag = True
-        #     results += [{'number': segment, 'start': round(start, round_to + 1),
-        #                 'end': round(end, round_to + 1), 'root': start,
-        #                 'itrs': itrs}]
-        if f(start) * f(end) < 0.0:
-            root = refinement(start, end, eps)
-            results += [{'number': segment, 'start': round(start, round_to + 1),
-                         'end': round(end, round_to + 1), 'root': round(root, round_to),
-                         'itrs': itrs}]
-        
+        if f(start) * f(end) <= 0.0:
+            results += [refinement(start, end, eps)]
+
         start = end
         end += step
-        if end > interval_end - step:
-            break
-    itrs = 0
-    if f(start) * f(end) < 0.0:
-            root = refinement(end - step, end, eps)
-            results += [{'number': segment, 'start': round(start, round_to + 1),
-                         'end': round(end, round_to + 1), 'root': round(root, round_to),
-                         'itrs': itrs}]
+    results += [refinement(start, interval_end, eps)]
+
     return results
 
 
@@ -78,9 +56,9 @@ def iterations(start, interval_end, step, eps):
 # step = float(input("Step: "))
 # eps = float(input("Eps: "))
 
-start = -10
+start = 0
 interval_end = 10
-step = 2
+step = 3
 eps = 1e-3
 
 results = iterations(start, interval_end, step, eps)
