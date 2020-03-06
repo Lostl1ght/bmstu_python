@@ -14,7 +14,6 @@ def do():
     interval_end = float(end_entry.get())
     step = float(step_entry.get())
     eps = float(eps_entry.get())
-    
 
     results = iterations(start, interval_end, step, eps)
     create_table(results)
@@ -23,73 +22,87 @@ def do():
 
 
 def f(x):
-    return x ** 2 -4
+    return sin(x)
 
 
-def derivative2(x):
-    return 2
+def d2(x):
+    return -sin(x)
+
+
+def d4(x):
+    return sin(x)
 
 
 def iterations(start, interval_end, step, eps):
     def refinement(a, b, eps):
-        nonlocal segment, itrs, round_to
-        delta_x = eps + 1.0
-        segment += 1
-        if derivative2(a) * f(a) > 0.0:
-            x0 = a
-            x = x0 + eps
-        elif derivative2(b) * f(b) > 0.0:
-            x0 = b
-            x = x0 - eps
+        def error(a, b):
+            c = b - eps
+            if f(a) * d2(a) < 0.0:
+                x = a
+            elif f(b) * d2(b) < 0.0:
+                x = b
+            delta = eps + 1.0
+            itrs = 0
+            while abs(delta) > eps:
+                itrs += 1
+                delta = f(x) * (x - c) / (f(x) - f(c))
+                x -= delta
+            return x, itrs
+
+        if abs(f(a)) < eps:
+            return a, 0
+        if abs(f(b)) < eps:
+            return b, 0
+
+        if f(a) * d2(a) > 0.0:
+            c = a
+        elif f(b) * d2(b) > 0.0:
+            c = b
         else:
-            x0 = (a + b) / 2
-            x = x0 - 0.1
+            c = (a + b) / 2
 
-        while abs(delta_x) > eps:
+        if f(a) * d2(a) < 0.0:
+            x = a
+        elif f(b) * d2(b) < 0.0:
+            x = b
+
+        delta = eps + 1.0
+        itrs = 0
+        while abs(delta) > eps:
             itrs += 1
-            delta_x = f(x) * (x - x0) / (f(x) - f(x0))
-            x -= delta_x
-
-        return x
+            delta = f(x) * (x - c) / (f(x) - f(c))
+            x -= delta
+            if itrs > 100:
+                return error(a, b)
+        return x, itrs
 
     end = start + step
     results = []
-    segment = 0
     round_to = abs(int(floor(log10(eps))))
-    flag = False
-    while end <= interval_end:
-        if flag:
-            flag = False
-            continue
-        itrs = 0
-        if abs(f(end)) < eps:
-            segment += 1
-            flag = True
-            results += [{'number': segment, 'start': round(start, round_to + 1),
-                        'end': round(end, round_to + 1), 'root': end,
-                        'itrs': itrs}]
-        if abs(f(start)) < eps:
-            segment += 1
-            flag = True
-            results += [{'number': segment, 'start': round(start, round_to + 1),
-                        'end': round(end, round_to + 1), 'root': start,
-                        'itrs': itrs}]
-        if f(start) * f(end) < 0.0:
-            root = refinement(start, end, eps)
-            results += [{'number': segment, 'start': round(start, round_to + 1),
-                         'end': round(end, round_to + 1), 'root': round(root, round_to),
-                         'itrs': itrs}]
-        
+
+    while end < interval_end:
+        if f(start) * f(end) <= 0.0:
+            root, itrs = refinement(start, end, eps)
+            if abs(root) < eps:
+                root = 0.0
+            results += [{'start': round(start, round_to + 1), 'end': round(
+                end, round_to + 1), 'root': round(root, round_to), 'itrs': itrs, }]
+
         start = end
         end += step
-        if end > interval_end - step:
-            break
-    itrs = 0
-    if f(start) * f(end) < 0.0:
-            root = refinement(end - step, end, eps)
-            results += [{'number': segment, 'start': round(start, round_to + 1),
-                         'end': round(end, round_to + 1), 'root': round(root, round_to),
-                         'itrs': itrs}]
+    root, itrs = refinement(start, end, eps)
+    if abs(root) < eps:
+        root = 0.0
+    results += [{'start': round(start, round_to + 1), 'end': round(
+        end, round_to + 1), 'root': round(root, round_to), 'itrs': itrs, }]
+
+    i = 0
+    length = len(results)
+    while i < length - 1:
+        if abs(results[i]['root'] - results[i + 1]['root']) < eps:
+            results.pop(i + 1)
+            length -= 1
+        i += 1
     return results
 
 
@@ -97,7 +110,8 @@ def create_table(results):
     global created, tree
     if created:
         tree.pack_forget()
-    tree = Treeview(table_frame, columns=('start', 'end', 'root', 'itrs'), height=15)
+    tree = Treeview(table_frame, columns=(
+        'start', 'end', 'root', 'itrs'), height=15)
 
     tree.column('#0', width=160, minwidth=160)
     tree.column('start', width=160, minwidth=160)
@@ -112,41 +126,81 @@ def create_table(results):
     tree.heading('itrs', text='It-n number')
 
     for line, n in zip(results, range(len(results))):
-        tree.insert('', n, text=results[n]['number'],
+        tree.insert('', n, text=str(n),
                     values=(results[n]['start'], results[n]['end'], results[n]['root'], results[n]['itrs']))
 
     tree.pack()
     created = True
 
 
-def iterations_for_d(start, interval_end):
-    def refinement_for_d(a, b):
-        delta_x = 1e-4 + 1.0
-        if derivative2(a) > 0.0:
-            x0 = a
-            x = b
+def iterations_for_d(start, interval_end, step, eps):
+    def refinement_for_d(a, b, eps):
+        def error_for_d(a, b):
+            c = b - eps
+            if d2(a) * d4(a) < 0.0:
+                x = a
+            elif d2(b) * d4(b) < 0.0:
+                x = b
+            delta = eps + 1.0
+            itrs = 0
+            while abs(delta) > eps:
+                itrs += 1
+                delta = d2(x) * (x - c) / (d2(x) - d2(c))
+                x -= delta
+            return x, itrs
+
+        if abs(d2(a)) < eps:
+            return a
+        if abs(d2(b)) < eps:
+            return b
+
+        if d2(a) * d4(a) > 0.0:
+            c = a
+        elif d2(b) * d4(b) > 0.0:
+            c = b
         else:
-            x0 = b
+            c = (a + b) / 2
+
+        if d2(a) * d4(a) < 0.0:
             x = a
+        elif d2(b) * d4(b) < 0.0:
+            x = b
 
-        while abs(delta_x) > 1e-4:
-            delta_x = derivative2(x) * (x - x0) / (derivative2(x) - derivative2(x0))
-            x -= delta_x
-
+        delta = eps + 1.0
+        itrs = 0
+        while abs(delta) > eps:
+            itrs += 1
+            delta = f(x) * (x - c) / (f(x) - f(c))
+            x -= delta
+            if itrs > 100:
+                return error_for_d(a, b)
         return x
 
-    end = start + 0.1
+    end = start + step
     results = []
-    while end <= interval_end:
-        if f(start) * f(end) < 0.0:
-            results += [refinement_for_d(start, end)]
+    round_to = abs(int(floor(log10(eps))))
 
-        if end == interval_end:
-            break
+    while end < interval_end:
+        if f(start) * f(end) <= 0.0:
+            root = refinement_for_d(start, end, eps)
+            if abs(root) < eps:
+                root = 0.0
+            results += [round(root, round_to)]
 
         start = end
-        end += 0.1
+        end += step
+    root = refinement_for_d(start, end, 1e-5)
+    if abs(root) < eps:
+        root = 0.0
+    results += [round(root, round_to)]
 
+    i = 0
+    length = len(results)
+    while i < length - 1:
+        if abs(results[i] - results[i + 1]) < eps:
+            results.pop(i + 1)
+            length -= 1
+        i += 1
     return results
 
 
@@ -177,25 +231,33 @@ def create_graph(start, interval_end, results):
         root_x.append((i['root']))
         root_y.append(0)
 
+    x = np.arange(start, interval_end, 0.01)
+    y = []
+    for i in x:
+        y.append(f(i))
+
+    scat_x = np.array(iterations_for_d(start, interval_end, 0.01, 1e-4))
+    scat_y = []
+    for i in scat_x:
+        scat_y.append(f(i))
+
     fig = plt.Figure(figsize=(8, 4), dpi=100)
 
     ax = fig.add_subplot(111)
 
-    ax.plot(np.arange(start, interval_end, 0.01), f(np.arange(start, interval_end, 0.01)))
+    ax.plot(x, y)
 
     ax.set_title('y = f(x)')
     ax.set_ylabel('y')
     ax.set_xlabel('x')
 
-    ax.hlines(0, min(np.arange(start, interval_end, 0.01)), max(np.arange(start, interval_end, 0.01)), colors='black')
-    ax.vlines(0, min(f(np.arange(start, interval_end, 0.01))), max(f(np.arange(start, interval_end, 0.01))),
-              colors='black')
+    ax.hlines(0, start, interval_end, colors='black')
+    ax.vlines(0, min(y), max(y), colors='black')
     line1 = mlines.Line2D([], [], color='blue')
-    line2 = ax.scatter(np.array(iterations_for_d(start, interval_end)),
-                       f(np.array(iterations_for_d(start, interval_end))),
-                       color='g')
+    line2 = ax.scatter(scat_x, scat_y, color='g')
     line3 = ax.scatter(root_x, root_y, color='r')
-    ax.legend((line1, line2, line3), ('Function', 'Inflection points', 'Root points'))
+    ax.legend((line1, line2, line3), ('Function',
+                                      'Inflection points', 'Root points'))
 
     canvas = FigureCanvasTkAgg(fig, master=graph_frame)
     canvas.draw()

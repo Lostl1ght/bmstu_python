@@ -2,11 +2,11 @@ from math import sin, floor, log10
 
 
 def f(x):
-    return sin(x) #x * x - 2
+    return sin(x)
 
 
 def d2(x):
-    return -sin(x) #2
+    return -sin(x)
 
 
 def iterations(start, interval_end, step, eps):
@@ -70,6 +70,13 @@ def iterations(start, interval_end, step, eps):
         root = 0.0
     results += [{'root': round(root, round_to), 'itrs': itrs}]
 
+    i = 0
+    length = len(results)
+    while i < length - 1:
+        if abs(results[i]['root'] - results[i + 1]['root']) < eps:
+            results.pop(i + 1)
+            length -= 1
+        i += 1
     return results
 
 
@@ -78,19 +85,12 @@ def iterations(start, interval_end, step, eps):
 # step = float(input("Step: "))
 # eps = float(input("Eps: "))
 
-start = -1
-interval_end = 10
+start = -20
+interval_end = 20
 step = 3
-eps = 1e-4
+eps = 1e-5
 
 results = iterations(start, interval_end, step, eps)
-i = 0
-length = len(results)
-while i < length - 1:
-    if abs(results[i]['root'] - results[i + 1]['root']) < eps:
-        results.pop(i + 1)
-        length -= 1
-    i += 1
 
 for i in results:
     print(i)
