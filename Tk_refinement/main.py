@@ -22,15 +22,15 @@ def do():
 
 
 def f(x):
-    return sin(x)
+    return sin(x)#x**2-4#
 
 
 def d2(x):
-    return -sin(x)
+    return -sin(x)#2#
 
 
 def d4(x):
-    return sin(x)
+    return sin(x)#0#
 
 
 def iterations(start, interval_end, step, eps):
@@ -165,12 +165,14 @@ def iterations_for_d(start, interval_end, step, eps):
             x = a
         elif d2(b) * d4(b) < 0.0:
             x = b
+        else:
+            return None
 
         delta = eps + 1.0
         itrs = 0
         while abs(delta) > eps:
             itrs += 1
-            delta = f(x) * (x - c) / (f(x) - f(c))
+            delta = d2(x) * (x - c) / (d2(x) - d2(c))
             x -= delta
             if itrs > 100:
                 return error_for_d(a, b)
@@ -183,16 +185,17 @@ def iterations_for_d(start, interval_end, step, eps):
     while end < interval_end:
         if f(start) * f(end) <= 0.0:
             root = refinement_for_d(start, end, eps)
-            if abs(root) < eps:
-                root = 0.0
-            results += [round(root, round_to)]
+            if root is not None:
+                if abs(root) < eps:
+                    root = 0.0
+                results += [round(root, round_to)]
 
         start = end
         end += step
-    root = refinement_for_d(start, end, 1e-5)
-    if abs(root) < eps:
-        root = 0.0
-    results += [round(root, round_to)]
+    # root = refinement_for_d(start, end, 1e-5)
+    # if abs(root) < eps:
+    #     root = 0.0
+    # results += [round(root, round_to)]
 
     i = 0
     length = len(results)
