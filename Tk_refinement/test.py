@@ -2,17 +2,17 @@ from math import log10, floor, sin, cos
 
 
 def f(x):
-    # return math.sin(x)
-    return x ** 2 - 4
+    return sin(x)
+    # return x ** 2 - 4
 
 
 def d(x):
-    # return math.cos(x)
-    return 2 * x
+    return cos(x)
+    # return 2 * x
 
 def d2(x):
-    # return -math.sin(x)
-    return 2
+    return -sin(x)
+    # return 2
 
 
 def chord_method(start, end, eps):
@@ -31,9 +31,9 @@ def chord_method(start, end, eps):
 
     return x, iterations
 
-start = -4
-ends = 4
-step = 2
+start = -10
+ends = 10
+step = 3
 eps = 1e-3
 
 end = start + step
