@@ -93,7 +93,7 @@ def chord_method(start, ends, step, eps):
             x, iterations = ends, 0
             roots += [{'root': x, 'iterations': iterations,
                        'start': start, 'end': ends}]
-        elif f(start) * f(end) < 0:
+        elif f(start) * f(ends) < 0:
             x, iterations = refinement(start, ends, eps)
             roots += [{'root': x, 'iterations': iterations,
                        'start': start, 'end': ends}]
