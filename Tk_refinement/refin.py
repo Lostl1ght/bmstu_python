@@ -1,27 +1,47 @@
 from math import log10, floor, sin, cos
 
 
-def chord_method(start, ends, step, eps):
-    def f(x):
-        return sin(x)
-        # return x ** 2 - 4
+def f(inflation, x):
+    if not inflation:
+        # return sin(x)
+        return x ** 2 - 4
+        # return (x - 1) ** 3 - 2
+    else:
+        # return -sin(x)
+        return 2
+        # return 6 * (x - 1)
 
-    def d(x):
-        return cos(x)
-        # return 2 * x
+def d(inflation, x):
+    if not inflation:
+        # return cos(x)
+        return 2 * x
+        # return 3 * (x - 1) ** 2
+    else:
+        # return -cos(x)
+        return 0
+        # return 6
 
-    def d2(x):
-        return -sin(x)
-        # return 2
+def d2(inflation, x):
+    if not inflation:
+        # return -sin(x)
+        return 2
+        # return 6 * (x - 1)
+    else:
+        # return sin(x)
+        return 0
+        # return 0
+
+
+def chord_method(inflation, start, ends, step, eps):
 
     def refinement(start, end, eps):
         iterations = 0
-        if d(start) * d2(start) < 0:
+        if d(inflation, start) * d2(inflation, start) < 0:
             x = start
-            def calculate(x): return x - f(x) * (end - x) / (f(end) - f(x))
+            def calculate(x): return x - f(inflation, x) * (end - x) / (f(inflation, end) - f(inflation, x))
         else:
             x = end
-            def calculate(x): return x - f(x) * (start - x) / (f(start) - f(x))
+            def calculate(x): return x - f(inflation, x) * (start - x) / (f(inflation, start) - f(inflation, x))
 
         x_prev, x = x, calculate(x)
         while abs(x - x_prev) >= eps:
@@ -71,29 +91,29 @@ def chord_method(start, ends, step, eps):
 
     end = start + step
     while end < ends:
-        if abs(f(start)) < eps:
+        if abs(f(inflation, start)) < eps:
             x, iterations = start, 0
             roots += [{'root': x, 'iterations': iterations,
                        'start': start, 'end': end}]
-        elif abs(f(end)) < eps:
+        elif abs(f(inflation, end)) < eps:
             x, iterations = end, 0
             roots += [{'root': x, 'iterations': iterations,
                        'start': start, 'end': end}]
-        elif f(start) * f(end) < 0:
+        elif f(inflation, start) * f(inflation, end) < 0:
             x, iterations = refinement(start, end, eps)
             roots += [{'root': x, 'iterations': iterations,
                        'start': start, 'end': end}]
         start, end = end, end + step
     else:
-        if abs(f(start)) < eps:
+        if abs(f(inflation, start)) < eps:
             x, iterations = start, 0
             roots += [{'root': x, 'iterations': iterations,
                        'start': start, 'end': ends}]
-        elif abs(f(ends)) < eps:
+        elif abs(f(inflation, ends)) < eps:
             x, iterations = ends, 0
             roots += [{'root': x, 'iterations': iterations,
                        'start': start, 'end': ends}]
-        elif f(start) * f(ends) < 0:
+        elif f(inflation, start) * f(inflation, ends) < 0:
             x, iterations = refinement(start, ends, eps)
             roots += [{'root': x, 'iterations': iterations,
                        'start': start, 'end': ends}]
@@ -103,12 +123,18 @@ def chord_method(start, ends, step, eps):
     return roots
 
 
-start = -10
-ends = 10
-step = 3
-eps = 1e-4
+start = -4
+ends = 2
+step = 2
+eps = 1e-5
 
-roots = chord_method(start, ends, step, eps)
+roots = chord_method(False, start, ends, step, eps)
 
 for i in roots:
+    print(i)
+
+inflation = chord_method(True, start, ends, step, eps)
+
+print()
+for i in inflation:
     print(i)
