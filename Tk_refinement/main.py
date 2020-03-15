@@ -1,4 +1,4 @@
-from tkinter import Tk, Frame, Entry, Label, Button
+from tkinter import Tk, Frame, Entry, Label, Button, W, E
 from tkinter.ttk import Treeview
 
 import matplotlib.pyplot as plt
@@ -22,15 +22,18 @@ def do():
 
 
 def f(x):
-    return sin(x)#x**2-4#
+    # return sin(x)
+    return x**2-4
 
 
 def d2(x):
-    return -sin(x)#2#
+    # return -sin(x)
+    return 2
 
 
 def d4(x):
-    return sin(x)#0#
+    # return sin(x)
+    return 0
 
 
 def iterations(start, interval_end, step, eps):
@@ -48,7 +51,6 @@ def iterations(start, interval_end, step, eps):
                 delta = f(x) * (x - c) / (f(x) - f(c))
                 x -= delta
             return x, itrs
-
         if abs(f(a)) < eps:
             return a, 0
         if abs(f(b)) < eps:
@@ -65,6 +67,8 @@ def iterations(start, interval_end, step, eps):
             x = a
         elif f(b) * d2(b) < 0.0:
             x = b
+        else:
+            x = (a + b) / 2
 
         delta = eps + 1.0
         itrs = 0
@@ -93,8 +97,8 @@ def iterations(start, interval_end, step, eps):
     root, itrs = refinement(start, end, eps)
     if abs(root) < eps:
         root = 0.0
-    results += [{'start': round(start, round_to + 1), 'end': round(
-        end, round_to + 1), 'root': round(root, round_to), 'itrs': itrs, }]
+    # results += [{'start': round(start, round_to + 1), 'end': round(
+        # end, round_to + 1), 'root': round(root, round_to), 'itrs': itrs, }]
 
     i = 0
     length = len(results)
@@ -113,20 +117,20 @@ def create_table(results):
     tree = Treeview(table_frame, columns=(
         'start', 'end', 'root', 'itrs'), height=15)
 
-    tree.column('#0', width=160, minwidth=160)
-    tree.column('start', width=160, minwidth=160)
-    tree.column('end', width=160, minwidth=160)
-    tree.column('root', width=160, minwidth=160)
-    tree.column('itrs', width=160, minwidth=160)
+    tree.column('#0', width=160, minwidth=160, anchor=E)
+    tree.column('start', width=160, minwidth=160, anchor=E)
+    tree.column('end', width=160, minwidth=160, anchor=E)
+    tree.column('root', width=160, minwidth=160, anchor=E)
+    tree.column('itrs', width=160, minwidth=160, anchor=E)
 
-    tree.heading('#0', text='Root number')
-    tree.heading('start', text='Segment start')
-    tree.heading('end', text='Segment end')
-    tree.heading('root', text='Root X')
-    tree.heading('itrs', text='It-n number')
+    tree.heading('#0', text='Root number', anchor=W)
+    tree.heading('start', text='Segment start', anchor=E)
+    tree.heading('end', text='Segment end', anchor=E)
+    tree.heading('root', text='Root X', anchor=E)
+    tree.heading('itrs', text='It-n number', anchor=E)
 
     for line, n in zip(results, range(len(results))):
-        tree.insert('', n, text=str(n),
+        tree.insert('', n, text=str(n + 1),
                     values=(results[n]['start'], results[n]['end'], results[n]['root'], results[n]['itrs']))
 
     tree.pack()
@@ -239,7 +243,7 @@ def create_graph(start, interval_end, results):
     for i in x:
         y.append(f(i))
 
-    scat_x = np.array(iterations_for_d(start, interval_end, 0.01, 1e-4))
+    scat_x = np.array(iterations_for_d(start, interval_end, 0.1, 1e-4))
     scat_y = []
     for i in scat_x:
         scat_y.append(f(i))
@@ -257,10 +261,9 @@ def create_graph(start, interval_end, results):
     ax.hlines(0, start, interval_end, colors='black')
     ax.vlines(0, min(y), max(y), colors='black')
     line1 = mlines.Line2D([], [], color='blue')
-    line2 = ax.scatter(scat_x, scat_y, color='g')
+    # line2 = ax.scatter(scat_x, scat_y, color='g')    line2,                                  'Inflection points'
     line3 = ax.scatter(root_x, root_y, color='r')
-    ax.legend((line1, line2, line3), ('Function',
-                                      'Inflection points', 'Root points'))
+    ax.legend((line1,  line3), ('Function', 'Root points'))
 
     canvas = FigureCanvasTkAgg(fig, master=graph_frame)
     canvas.draw()
