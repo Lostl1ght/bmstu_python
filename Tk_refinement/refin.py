@@ -88,15 +88,15 @@ def chord_method(start, ends, step, eps):
         if abs(f(start)) < eps:
             x, iterations = start, 0
             roots += [{'root': x, 'iterations': iterations,
-                       'start': start, 'end': end}]
+                       'start': start, 'end': ends}]
         elif abs(f(ends)) < eps:
             x, iterations = ends, 0
             roots += [{'root': x, 'iterations': iterations,
-                       'start': start, 'end': end}]
+                       'start': start, 'end': ends}]
         elif f(start) * f(end) < 0:
             x, iterations = refinement(start, ends, eps)
             roots += [{'root': x, 'iterations': iterations,
-                       'start': start, 'end': end}]
+                       'start': start, 'end': ends}]
 
     pack(roots, eps)
 
