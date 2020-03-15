@@ -31,17 +31,23 @@ def chord_method(start, end, eps):
 
     return x, iterations
 
-start = -10
-ends = 10
-step = 3
-eps = 1e-3
+start = 1
+ends = 5
+step = 4
+eps = 1e-4
+
+roots = []
+form = '{:.' + str(abs(int(floor(log10(eps))))) + 'f}'
 
 end = start + step
 while end < ends:
     if f(start) * f(end) < 0:
         x, iterations = chord_method(start, end, eps)
-        print(x)
+        roots += [form.format(x)]
     start, end = end, end + step
 
 x, iterations = chord_method(start, ends, eps)
-print(x)    
+roots += [form.format(x)]
+
+for i in roots:
+    print(i)
