@@ -230,6 +230,7 @@ def callback2(event: 'tkinter.Event') -> None:
 window = Tk()
 window.title('Калькулятор')
 window.geometry('280x345')
+window.bind('<Return>', calculate)
 
 
 a_entry = [Entry, Entry]
@@ -239,6 +240,7 @@ a_entry[1] = Entry(window, font = 20, width=28, justify=RIGHT)
 a_entry[1].place(x=140, y=77, anchor='c')
 a_entry[0].bind('<Button-1>', callback1)
 a_entry[1].bind('<Button-1>', callback2)
+a_entry[0].focus_set()
 
 fu_label = Label(window, text='+', font = 20)
 fu_label.place(x=140, y=47, anchor='c')
