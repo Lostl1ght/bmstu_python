@@ -1,4 +1,4 @@
-from tkinter import Tk, Frame, Entry, Label, Button, W, E
+from tkinter import Tk, Frame, Entry, Label, Button, CENTER
 from tkinter.ttk import Treeview
 
 import matplotlib.pyplot as plt
@@ -17,7 +17,7 @@ def do():
     eps = float(eps_entry.get())
 
     results = chord_method(start, interval_end, step, eps)
-    create_table(results)
+    create_table(results, tree)
 
     create_graph(start, interval_end, results)
 
@@ -151,31 +151,27 @@ def bisect(start, ends, step):
     return inflation
 
 
-def create_table(results):
-    global created, tree
-    if created:
-        tree.pack_forget()
-    tree = Treeview(table_frame, columns=(
-        'start', 'end', 'root', 'itrs'), height=15)
+def create_table(results, tree):
+    tree.pack_forget()
+    tree = Treeview(table_frame, columns=('num', 'start', 'end', 'root', 'itrs'), height=15)
 
-    tree.column('#0', width=160, minwidth=160, anchor=E)
-    tree.column('start', width=160, minwidth=160, anchor=E)
-    tree.column('end', width=160, minwidth=160, anchor=E)
-    tree.column('root', width=160, minwidth=160, anchor=E)
-    tree.column('itrs', width=160, minwidth=160, anchor=E)
+    tree.column('#0', width=0, minwidth=0)
+    tree.column('num', width=160, minwidth=160, anchor=CENTER)
+    tree.column('start', width=160, minwidth=160, anchor=CENTER)
+    tree.column('end', width=160, minwidth=160, anchor=CENTER)
+    tree.column('root', width=160, minwidth=160, anchor=CENTER)
+    tree.column('itrs', width=160, minwidth=160, anchor=CENTER)
 
-    tree.heading('#0', text='Root number', anchor=W)
-    tree.heading('start', text='Segment start', anchor=E)
-    tree.heading('end', text='Segment end', anchor=E)
-    tree.heading('root', text='Root X', anchor=E)
-    tree.heading('itrs', text='It-n number', anchor=E)
+    tree.heading('num', text='Root number', anchor=CENTER)
+    tree.heading('start', text='Segment start', anchor=CENTER)
+    tree.heading('end', text='Segment end', anchor=CENTER)
+    tree.heading('root', text='Root X', anchor=CENTER)
+    tree.heading('itrs', text='It-n number', anchor=CENTER)
 
     for line, n in zip(results, range(len(results))):
-        tree.insert('', n, text=str(n + 1),
-                    values=(results[n]['start'], results[n]['end'], results[n]['root'], results[n]['iterations']))
+        tree.insert('', n, values=(str(n + 1), results[n]['start'], results[n]['end'], results[n]['root'], results[n]['iterations']))
 
     tree.pack()
-    created = True
 
 
 
@@ -251,8 +247,20 @@ input_frame = Frame(window)
 table_frame = Frame(window)
 graph_frame = Frame(window)
 
-created = False
-create_table([])
+tree = Treeview(table_frame, columns=('num', 'start', 'end', 'root', 'itrs'), height=15)
+tree.column('#0', width=0, minwidth=0)
+tree.column('num', width=160, minwidth=160, anchor=CENTER)
+tree.column('start', width=160, minwidth=160, anchor=CENTER)
+tree.column('end', width=160, minwidth=160, anchor=CENTER)
+tree.column('root', width=160, minwidth=160, anchor=CENTER)
+tree.column('itrs', width=160, minwidth=160, anchor=CENTER)
+
+tree.heading('num', text='Root number', anchor=CENTER)
+tree.heading('start', text='Segment start', anchor=CENTER)
+tree.heading('end', text='Segment end', anchor=CENTER)
+tree.heading('root', text='Root X', anchor=CENTER)
+tree.heading('itrs', text='It-n number', anchor=CENTER)
+tree.pack()
 create_blank()
 
 start_label = Label(input_frame, text='Start', width=20)
