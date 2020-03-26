@@ -48,7 +48,7 @@ def converter(a1: str, a2: str) -> (str, str, int, int):
     return bb1, bb2, length, dot_len
 
 
-def normalize(c: str, dot_len: int, minus: bool) -> str:
+def normalizer(c: str, dot_len: int, minus: bool) -> str:
     k = 0
     if dot_len > 0:
         c = c[:dot_len] + '.' + c[dot_len:]
@@ -180,7 +180,7 @@ def calculate(operation) -> None:
     else:
         c, minus = subtractor(b1, b2, length)
         fu_label['text'] = '-'
-    res = normalize(c, dot_len, minus)
+    res = normalizer(c, dot_len, minus)
 
     res_label['text'] = res
 
