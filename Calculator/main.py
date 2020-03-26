@@ -148,19 +148,19 @@ def choose(b: bool) -> None:
 
 def check(a1: str, a2: str) -> bool:
     error = False
-    if a_entry[0].get() == '' or a_entry[1].get() == '':
+    if a1 == '' or a2 == '':
         error = True
-    for i in a_entry[0].get():
+    for i in a1:
         if i not in '01.':
             error = True
             break
-    for i in a_entry[1].get():
+    for i in a2:
         if i not in '01.':
             error = True
             break
-    if a_entry[0].get().count('.') > 1:
+    if a1.count('.') > 1:
         error = True
-    if a_entry[1].get().count('.') > 1:
+    if a2.count('.') > 1:
         error = True
     if error:
         mb.showerror('Ошибка ввода', 'Введите верные числа!')
@@ -217,12 +217,12 @@ def set_focus(i: int) -> None:
     which = i
 
 
-def callback1(event: 'tkinter.Event') -> None:
+def focus1(event: 'tkinter.Event') -> None:
     global which
     which = 0
 
 
-def callback2(event: 'tkinter.Event') -> None:
+def focus2(event: 'tkinter.Event') -> None:
     global which
     which = 1
 
@@ -230,16 +230,17 @@ def callback2(event: 'tkinter.Event') -> None:
 window = Tk()
 window.title('Калькулятор')
 window.geometry('280x345')
+window.resizable(0, 0)
 window.bind('<Return>', calculate)
 
 
 a_entry = [Entry, Entry]
-a_entry[0] = Entry(window, font = 20, width=28, justify=RIGHT)
+a_entry[0] = Entry(window, font = 20, width=28, justify=CENTER)
 a_entry[0].place(x=140, y=15, anchor='c')
-a_entry[1] = Entry(window, font = 20, width=28, justify=RIGHT)
+a_entry[1] = Entry(window, font = 20, width=28, justify=CENTER)
 a_entry[1].place(x=140, y=77, anchor='c')
-a_entry[0].bind('<Button-1>', callback1)
-a_entry[1].bind('<Button-1>', callback2)
+a_entry[0].bind('<Button-1>', focus1)
+a_entry[1].bind('<Button-1>', focus2)
 a_entry[0].focus_set()
 
 fu_label = Label(window, text='+', font = 20)
@@ -253,24 +254,24 @@ btn_0 = Button(window, text='0', font = 20, command=lambda: insert_digit('0'))
 btn_0.place(x=40, y=170, width = 50, height = 50)
 btn_1 = Button(window, text='1', font = 20, command=lambda: insert_digit('1'))
 btn_1.place(x=90, y=170, width = 50, height = 50)
-btn_dot = Button(window, text='.', font = 20, command=lambda: insert_digit('.'))
-btn_dot.place(x=140, y=170, width = 50, height = 50)
 btn_plus = Button(window, text='+', font = 20, command=lambda: choose(True))
 btn_plus.place(x=190, y=170, width = 50, height = 50)
 
+btn_dot = Button(window, text='.', font = 20, command=lambda: insert_digit('.'))
+btn_dot.place(x=90, y=220, width = 50, height = 50)
 btn_up = Button(window, text='↑', font = 20, command=lambda: set_focus(0))
 btn_up.place(x=40, y=220, width = 50, height = 50)
-btn_down = Button(window, text='↓', font = 20, command=lambda: set_focus(1))
-btn_down.place(x=90, y=220, width = 50, height = 50)
-btn_del = Button(window, text='⇐', font = 20, background='#ebb95e', command=lambda: a_entry[which].delete(first = len(a_entry[which].get()) - 1, last = len(a_entry[which].get())))
-btn_del.place(x=140, y=220, width = 50, height = 50)
 btn_minus = Button(window, text='-', font = 20, command=lambda: choose(False))
 btn_minus.place(x=190, y=220, width = 50, height = 50)
 
+btn_down = Button(window, text='↓', font = 20, command=lambda: set_focus(1))
+btn_down.place(x=40, y=270, width = 50, height = 50)
 btn_eq = Button(window, text='=', font = 20, command=lambda: calculate(operation), background='#9ed65e')
-btn_eq.place(x=40, y=270, width = 100, height = 50) 
+btn_eq.place(x=90, y=270, width = 50, height = 50)
+btn_del = Button(window, text='⇐', font = 20, background='#ebb95e', command=lambda: a_entry[which].delete(first = len(a_entry[which].get()) - 1, last = len(a_entry[which].get())))
+btn_del.place(x=140, y=270, width = 50, height = 50) 
 btn_clear = Button(window, text='X', font = 20, command=delete_all, background='#eb6c52')
-btn_clear.place(x=140, y=270, width = 50, height = 50)
+btn_clear.place(x=190, y=270, width = 50, height = 50)
 
 main_menu = Menu()
 
