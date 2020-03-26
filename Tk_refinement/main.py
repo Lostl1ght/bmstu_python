@@ -6,7 +6,8 @@ import matplotlib.lines as mlines
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 import numpy as np
 
-from math import log10, floor, sin
+from math import log10, floor, sin, cos
+import scipy.optimize as optimize
 
 
 def do():
@@ -15,99 +16,139 @@ def do():
     step = float(step_entry.get())
     eps = float(eps_entry.get())
 
-    results = iterations(start, interval_end, step, eps)
+    results = chord_method(start, interval_end, step, eps)
     create_table(results)
 
     create_graph(start, interval_end, results)
 
 
 def f(x):
-    # return sin(x)
-    return x**2-4
+    return sin(x)
+    # return x ** 2 - 4
+    # return (x - 1) ** 3 - 2
 
+def d(x):
+    return cos(x)
+    # return 2 * x
+    # return 3 * (x - 1) ** 2
 
 def d2(x):
-    # return -sin(x)
-    return 2
+    return -sin(x)
+    # return 2
+    # return 6 * (x - 1)
 
 
-def d4(x):
-    # return sin(x)
-    return 0
+def chord_method(start, ends, step, eps):
 
-
-def iterations(start, interval_end, step, eps):
-    def refinement(a, b, eps):
-        def error(a, b):
-            c = b - eps
-            if f(a) * d2(a) < 0.0:
-                x = a
-            elif f(b) * d2(b) < 0.0:
-                x = b
-            delta = eps + 1.0
-            itrs = 0
-            while abs(delta) > eps:
-                itrs += 1
-                delta = f(x) * (x - c) / (f(x) - f(c))
-                x -= delta
-            return x, itrs
-        if abs(f(a)) < eps:
-            return a, 0
-        if abs(f(b)) < eps:
-            return b, 0
-
-        if f(a) * d2(a) > 0.0:
-            c = a
-        elif f(b) * d2(b) > 0.0:
-            c = b
+    def refinement(start, end, eps):
+        iterations = 0
+        if d(start) * d2(start) < 0:
+            x = start
+            def calculate(x): return x - f(x) * (end - x) / (f(end) - f(x))
         else:
-            c = (a + b) / 2
+            x = end
+            def calculate(x): return x - f(x) * (start - x) / (f(start) - f(x))
 
-        if f(a) * d2(a) < 0.0:
-            x = a
-        elif f(b) * d2(b) < 0.0:
-            x = b
-        else:
-            x = (a + b) / 2
+        x_prev, x = x, calculate(x)
+        while abs(x - x_prev) >= eps:
+            x_prev, x = x, calculate(x)
+            iterations += 1
 
-        delta = eps + 1.0
-        itrs = 0
-        while abs(delta) > eps:
-            itrs += 1
-            delta = f(x) * (x - c) / (f(x) - f(c))
-            x -= delta
-            if itrs > 100:
-                return error(a, b)
-        return x, itrs
+        return x, iterations
+
+    def pack(roots, eps):
+        r = str(abs(int(floor(log10(eps)))))
+        form = '{:.' + str(r) + 'f}'
+
+        for i in range(len(roots)):
+            if abs(roots[i]['root']) < eps:
+                roots[i]['root'] = abs(roots[i]['root'])
+            roots[i]['root'] = form.format(roots[i]['root'])
+
+        i = 1
+        n = len(roots)
+        while i < n:
+            if roots[i]['root'][:len(roots[i]['root']) - 2] == roots[i - 1]['root'][:len(roots[i - 1]['root']) - 2]:
+                roots.pop(i - 1)
+                n -= 1
+            i += 1
+
+        max_len_root = 0
+        max_len_it = 0
+        max_len_start = 0
+        max_len_end = 0
+        for i in roots:
+            if len(i['root']) > max_len_root:
+                max_len_root = len(i['root'])
+            if len(str(i['iterations'])) > max_len_it:
+                max_len_it = len(str(i['iterations']))
+            if len(str(i['start'])) > max_len_start:
+                max_len_start = len(str(i['start']))
+            if len(str(i['end'])) > max_len_end:
+                max_len_end = len(str(i['end']))
+
+        for i in range(len(roots)):
+            roots[i]['root'] = ' ' * (max_len_root - len(roots[i]['root'])) + roots[i]['root']
+            roots[i]['iterations'] = ' ' * (max_len_it - len(str(roots[i]['iterations']))) + str(roots[i]['iterations'])
+            roots[i]['start'] = ' ' * (max_len_start - len(str(roots[i]['start']))) + str(roots[i]['start'])
+            roots[i]['end'] = ' ' * (max_len_end - len(str(roots[i]['end']))) + str(roots[i]['end'])
+
+    roots = []
 
     end = start + step
-    results = []
+    while end < ends:
+        if abs(f(start)) < eps:
+            x, iterations = start, 0
+            roots += [{'root': x, 'iterations': iterations,
+                       'start': start, 'end': end}]
+        elif abs(f(end)) < eps:
+            x, iterations = end, 0
+            roots += [{'root': x, 'iterations': iterations,
+                       'start': start, 'end': end}]
+        elif f(start) * f(end) < 0:
+            x, iterations = refinement(start, end, eps)
+            roots += [{'root': x, 'iterations': iterations,
+                       'start': start, 'end': end}]
+        start, end = end, end + step
+    else:
+        if abs(f(start)) < eps:
+            x, iterations = start, 0
+            roots += [{'root': x, 'iterations': iterations,
+                       'start': start, 'end': ends}]
+        elif abs(f(ends)) < eps:
+            x, iterations = ends, 0
+            roots += [{'root': x, 'iterations': iterations,
+                       'start': start, 'end': ends}]
+        elif f(start) * f(ends) < 0:
+            x, iterations = refinement(start, ends, eps)
+            roots += [{'root': x, 'iterations': iterations,
+                       'start': start, 'end': ends}]
+
+    pack(roots, eps)
+
+    return roots
+
+
+def bisect(start, ends, step):
+    end = start + step
+    inflation = []
+    eps = 1e-7
     round_to = abs(int(floor(log10(eps))))
+    while start < ends:
+        if abs(d2(start)) < 1e-3:
+            inflation.append(round(start, round_to))
+        elif abs(d2(end)) < 1e-3:
+            inflation.append(round(end, round_to))
+        elif d2(start) * d2(end) < 0:
+            x = optimize.bisect(d2, start, end, rtol=eps)
+            inflation.append(round(x, round_to))
+        start, end = end, end + step
+    else:
+        if d2(start) * d2(ends) < 0:
+            x = optimize.bisect(d2, start, ends, rtol=1e-3)
+            inflation.append(round(x, round_to))
 
-    while end < interval_end:
-        if f(start) * f(end) <= 0.0:
-            root, itrs = refinement(start, end, eps)
-            if abs(root) < eps:
-                root = 0.0
-            results += [{'start': round(start, round_to + 1), 'end': round(
-                end, round_to + 1), 'root': round(root, round_to), 'itrs': itrs, }]
-
-        start = end
-        end += step
-    root, itrs = refinement(start, end, eps)
-    if abs(root) < eps:
-        root = 0.0
-    # results += [{'start': round(start, round_to + 1), 'end': round(
-        # end, round_to + 1), 'root': round(root, round_to), 'itrs': itrs, }]
-
-    i = 0
-    length = len(results)
-    while i < length - 1:
-        if abs(results[i]['root'] - results[i + 1]['root']) < eps:
-            results.pop(i + 1)
-            length -= 1
-        i += 1
-    return results
+    return inflation
 
 
 def create_table(results):
@@ -131,84 +172,13 @@ def create_table(results):
 
     for line, n in zip(results, range(len(results))):
         tree.insert('', n, text=str(n + 1),
-                    values=(results[n]['start'], results[n]['end'], results[n]['root'], results[n]['itrs']))
+                    values=(results[n]['start'], results[n]['end'], results[n]['root'], results[n]['iterations']))
 
     tree.pack()
     created = True
 
 
-def iterations_for_d(start, interval_end, step, eps):
-    def refinement_for_d(a, b, eps):
-        def error_for_d(a, b):
-            c = b - eps
-            if d2(a) * d4(a) < 0.0:
-                x = a
-            elif d2(b) * d4(b) < 0.0:
-                x = b
-            delta = eps + 1.0
-            itrs = 0
-            while abs(delta) > eps:
-                itrs += 1
-                delta = d2(x) * (x - c) / (d2(x) - d2(c))
-                x -= delta
-            return x, itrs
 
-        if abs(d2(a)) < eps:
-            return a
-        if abs(d2(b)) < eps:
-            return b
-
-        if d2(a) * d4(a) > 0.0:
-            c = a
-        elif d2(b) * d4(b) > 0.0:
-            c = b
-        else:
-            c = (a + b) / 2
-
-        if d2(a) * d4(a) < 0.0:
-            x = a
-        elif d2(b) * d4(b) < 0.0:
-            x = b
-        else:
-            return None
-
-        delta = eps + 1.0
-        itrs = 0
-        while abs(delta) > eps:
-            itrs += 1
-            delta = d2(x) * (x - c) / (d2(x) - d2(c))
-            x -= delta
-            if itrs > 100:
-                return error_for_d(a, b)
-        return x
-
-    end = start + step
-    results = []
-    round_to = abs(int(floor(log10(eps))))
-
-    while end < interval_end:
-        if f(start) * f(end) <= 0.0:
-            root = refinement_for_d(start, end, eps)
-            if root is not None:
-                if abs(root) < eps:
-                    root = 0.0
-                results += [round(root, round_to)]
-
-        start = end
-        end += step
-    # root = refinement_for_d(start, end, 1e-5)
-    # if abs(root) < eps:
-    #     root = 0.0
-    # results += [round(root, round_to)]
-
-    i = 0
-    length = len(results)
-    while i < length - 1:
-        if abs(results[i] - results[i + 1]) < eps:
-            results.pop(i + 1)
-            length -= 1
-        i += 1
-    return results
 
 
 def create_blank():
@@ -243,7 +213,7 @@ def create_graph(start, interval_end, results):
     for i in x:
         y.append(f(i))
 
-    scat_x = np.array(iterations_for_d(start, interval_end, 0.1, 1e-4))
+    scat_x = np.array(bisect(start, interval_end, 0.1))
     scat_y = []
     for i in scat_x:
         scat_y.append(f(i))
