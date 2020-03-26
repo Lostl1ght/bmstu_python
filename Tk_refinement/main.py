@@ -1,4 +1,4 @@
-from tkinter import Tk, Frame, Entry, Label, Button, CENTER
+from tkinter import Tk, Frame, Entry, Label, Button, CENTER, W
 from tkinter.ttk import Treeview
 
 import matplotlib.pyplot as plt
@@ -19,23 +19,23 @@ def do():
     results = chord_method(start, interval_end, step, eps)
     create_table(results, tree)
 
-    create_graph(start, interval_end, results)
+    create_graph(start, interval_end, results, graph_frame)
 
 
 def f(x):
-    return sin(x)
+    # return sin(x)
     # return x ** 2 - 4
-    # return (x - 1) ** 3 - 2
+    return (x - 1) ** 3 - 2
 
 def d(x):
-    return cos(x)
+    # return cos(x)
     # return 2 * x
-    # return 3 * (x - 1) ** 2
+    return 3 * (x - 1) ** 2
 
 def d2(x):
-    return -sin(x)
+    # return -sin(x)
     # return 2
-    # return 6 * (x - 1)
+    return 6 * (x - 1)
 
 
 def chord_method(start, ends, step, eps):
@@ -152,21 +152,7 @@ def bisect(start, ends, step):
 
 
 def create_table(results, tree):
-    tree.pack_forget()
-    tree = Treeview(table_frame, columns=('num', 'start', 'end', 'root', 'itrs'), height=15)
-
-    tree.column('#0', width=0, minwidth=0)
-    tree.column('num', width=160, minwidth=160, anchor=CENTER)
-    tree.column('start', width=160, minwidth=160, anchor=CENTER)
-    tree.column('end', width=160, minwidth=160, anchor=CENTER)
-    tree.column('root', width=160, minwidth=160, anchor=CENTER)
-    tree.column('itrs', width=160, minwidth=160, anchor=CENTER)
-
-    tree.heading('num', text='Root number', anchor=CENTER)
-    tree.heading('start', text='Segment start', anchor=CENTER)
-    tree.heading('end', text='Segment end', anchor=CENTER)
-    tree.heading('root', text='Root X', anchor=CENTER)
-    tree.heading('itrs', text='It-n number', anchor=CENTER)
+    tree.delete(*tree.get_children())
 
     for line, n in zip(results, range(len(results))):
         tree.insert('', n, values=(str(n + 1), results[n]['start'], results[n]['end'], results[n]['root'], results[n]['iterations']))
@@ -190,29 +176,46 @@ def create_blank():
     toolbar = NavigationToolbar2Tk(canvas, graph_frame)
     toolbar.update()
 
+    tree = Treeview(table_frame, columns=('num', 'start', 'end', 'root', 'itrs'), height=15)
 
-def create_graph(start, interval_end, results):
-    global graph_frame
+    tree.column('#0', width=0, minwidth=0)
+    tree.column('num', width=160, minwidth=160, anchor=CENTER)
+    tree.column('start', width=160, minwidth=160, anchor=CENTER)
+    tree.column('end', width=160, minwidth=160, anchor=CENTER)
+    tree.column('root', width=160, minwidth=160, anchor=CENTER)
+    tree.column('itrs', width=160, minwidth=160, anchor=CENTER)
 
+    tree.heading('num', text='Root number', anchor=CENTER)
+    tree.heading('start', text='Segment start', anchor=CENTER)
+    tree.heading('end', text='Segment end', anchor=CENTER)
+    tree.heading('root', text='Root X', anchor=CENTER)
+    tree.heading('itrs', text='It-n number', anchor=CENTER)
+
+    tree.pack()
+
+    return tree
+
+
+def create_graph(start, interval_end, results, graph_frame):
     graph_frame.pack_forget()
     graph_frame = Frame(window)
     graph_frame.grid(row=1, column=1)
-
-    root_x = []
-    root_y = []
-    for i in results:
-        root_x.append((i['root']))
-        root_y.append(0)
 
     x = np.arange(start, interval_end, 0.01)
     y = []
     for i in x:
         y.append(f(i))
 
-    scat_x = np.array(bisect(start, interval_end, 0.1))
-    scat_y = []
-    for i in scat_x:
-        scat_y.append(f(i))
+    root_x = []
+    root_y = []
+    for dic in results:
+        root_x.append(float(dic['root']))
+        root_y.append(0)           
+
+    inf_x = np.array(bisect(start, interval_end, 0.1))
+    inf_y = []
+    for i in inf_x:
+        inf_y.append(f(i))
 
     fig = plt.Figure(figsize=(8, 4), dpi=100)
 
@@ -227,9 +230,9 @@ def create_graph(start, interval_end, results):
     ax.hlines(0, start, interval_end, colors='black')
     ax.vlines(0, min(y), max(y), colors='black')
     line1 = mlines.Line2D([], [], color='blue')
-    # line2 = ax.scatter(scat_x, scat_y, color='g')    line2,                                  'Inflection points'
+    line2 = ax.scatter(inf_x, inf_y, color='g')                                      
     line3 = ax.scatter(root_x, root_y, color='r')
-    ax.legend((line1,  line3), ('Function', 'Root points'))
+    ax.legend((line1, line2, line3), ('Function', 'Root points', 'Inflection points'))
 
     canvas = FigureCanvasTkAgg(fig, master=graph_frame)
     canvas.draw()
@@ -247,33 +250,18 @@ input_frame = Frame(window)
 table_frame = Frame(window)
 graph_frame = Frame(window)
 
-tree = Treeview(table_frame, columns=('num', 'start', 'end', 'root', 'itrs'), height=15)
-tree.column('#0', width=0, minwidth=0)
-tree.column('num', width=160, minwidth=160, anchor=CENTER)
-tree.column('start', width=160, minwidth=160, anchor=CENTER)
-tree.column('end', width=160, minwidth=160, anchor=CENTER)
-tree.column('root', width=160, minwidth=160, anchor=CENTER)
-tree.column('itrs', width=160, minwidth=160, anchor=CENTER)
-
-tree.heading('num', text='Root number', anchor=CENTER)
-tree.heading('start', text='Segment start', anchor=CENTER)
-tree.heading('end', text='Segment end', anchor=CENTER)
-tree.heading('root', text='Root X', anchor=CENTER)
-tree.heading('itrs', text='It-n number', anchor=CENTER)
-tree.pack()
-create_blank()
+tree = create_blank()
 
 start_label = Label(input_frame, text='Start', width=20)
 end_label = Label(input_frame, text='End', width=20)
 step_label = Label(input_frame, text='Step', width=20)
 eps_label = Label(input_frame, text='Eps', width=20)
-maxi_label = Label(input_frame, text='Max iterations', width=20)
 
 start_entry = Entry(input_frame, width=20)
 end_entry = Entry(input_frame, width=20)
 step_entry = Entry(input_frame, width=20)
 eps_entry = Entry(input_frame, width=20)
-maxi_entry = Entry(input_frame, width=20)
+eps_entry.insert(0, '1e-4')
 
 btn = Button(input_frame, text='Input', width=15, command=do)
 
@@ -285,13 +273,11 @@ start_label.grid(row=1)
 end_label.grid(row=3)
 step_label.grid(row=5)
 eps_label.grid(row=7)
-# maxi_label.grid(row=9)
 
 start_entry.grid(row=2)
 end_entry.grid(row=4)
 step_entry.grid(row=6)
 eps_entry.grid(row=8)
-# maxi_entry.grid(row=10)
 
 btn.grid(row=11, column=0, columnspan=4)
 
