@@ -277,7 +277,7 @@ popupMenu = OptionMenu(input_frame, tkvar, *choices)
 popupMenu['width'] = 12
 tkvar.trace('w', change_key)
 
-func_label = Label(input_frame, text='Funrcion')
+func_label = Label(input_frame, text='Function')
 start_label = Label(input_frame, text='Start', width=20)
 end_label = Label(input_frame, text='End', width=20)
 step_label = Label(input_frame, text='Step', width=20)
