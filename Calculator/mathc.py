@@ -1,5 +1,5 @@
-a1 = '10000101.000101'
-a2 = '10100.001'
+a1 = '101101000'
+a2 = '111111'
 
 
 print('Input nums:')
@@ -130,7 +130,12 @@ def subtractor(b1: str, b2: str, length: int) -> (str, bool):
             flag = True
         
         if b1[i] == '1' and b2[i] == '1':
-            c += '0'
+            if flag:
+                c += '1'
+                flag = True
+            else:
+                c += '0'
+                flag = False
 
     return c, minus
 
