@@ -141,8 +141,10 @@ def choose(b: bool) -> None:
         fu_label['text'] = '-'
 
 
-def check(a1: str, a2: str) -> Bool:
+def check(a1: str, a2: str) -> bool:
     error = False
+    if a_entry[0].get() == '' or a_entry[1].get() == '':
+        error = True
     for i in a_entry[0].get():
         if i not in '01.':
             error = True
@@ -160,7 +162,7 @@ def check(a1: str, a2: str) -> Bool:
     if '.' in a_entry[1].get() and a_entry[1].get().index('.') == 0:
         error = True
     if error:
-        mb.showerror("Ошибка ввода", "Введите верные числа!")
+        mb.showerror('Ошибка ввода', 'Введите верные числа!')
         res_label['text'] = 'ОШИБКА'
         return True
     else:
@@ -172,15 +174,38 @@ def calculate(operation) -> None:
         return
     b1, b2, length, dot_len = converter(a_entry[0].get(), a_entry[1].get())
     if operation:
+        fu_label['text'] = '+'
         c, minus = adder(b1, b2, length)
     else:
         c, minus = subtractor(b1, b2, length)
+        fu_label['text'] = '-'
     res = normalize(c, dot_len, minus)
 
     res_label['text'] = res
 
+
+def delete_all() -> None:
+    a_entry[0].delete(0, END)
+    a_entry[1].delete(0, END)
+    res_label.config(text = '')
+
+
+def delete_one(opt: int) -> None:
+    a_entry[opt].delete(0, END)
+    res_label.config(text = '')
+
+
+def showabout():
+    win = Toplevel(window, width=410, height=150)
+    win.title('Информация о программе и её владельце')
+    lblwin = Label(win, text = 'Калькулятор, \nскладывающий или вычитающий числа \nв двоичной системе счисления' +
+                                '\nбез перевода в десятичную. \n© Буланый Константин, ИУ7-26Б', font  = '8')
+    lblwin.place(relx=0.5, rely=0.35, anchor='c')
+    close_button = Button(win, text='Закрыть', command = lambda: win.destroy())
+    close_button.place(relx = 0.45, rely = 0.7, width = 65, height = 35)
+
 window = Tk()
-window.title("Калькулятор")
+window.title('Калькулятор')
 window.geometry('280x345')
 
 a_entry = [Entry, Entry]
@@ -218,5 +243,25 @@ btn_eq = Button(window, text='=', font = 20, command=lambda: calculate(operation
 btn_eq.place(x=40, y=270, width = 100, height = 50) 
 btn_clear = Button(window, text='X', font = 20)
 btn_clear.place(x=140, y=270, width = 50, height = 50)
+
+main_menu = Menu()
+
+del_menu = Menu()
+del_menu.add_command(label='Очистить первое поле ввода', command=lambda: delete_one(0))
+del_menu.add_command(label='Очистить второе поле ввода', command=lambda: delete_one(1))
+del_menu.add_command(label='Очистить все поля', command=delete_all)
+
+calc_menu = Menu()
+calc_menu.add_command(label='Сложить числа', command=lambda: calculate(True))
+calc_menu.add_command(label='Вычесть числа', command=lambda: calculate(False))
+
+inf_menu = Menu()
+inf_menu.add_command(label = 'Информация о программе и её владельце', command=showabout)
+
+main_menu.add_cascade(label='Очистка', menu=del_menu)
+main_menu.add_cascade(label='Операции', menu=calc_menu)
+main_menu.add_cascade(label='Справка', menu=inf_menu)
+
+window.config(menu=main_menu)
 
 window.mainloop()
