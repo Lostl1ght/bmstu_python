@@ -1,4 +1,4 @@
-from tkinter import Tk, Frame, Entry, Label, Button, CENTER, W
+from tkinter import Tk, Frame, Entry, Label, Button, CENTER, W, StringVar, OptionMenu
 from tkinter.ttk import Treeview
 
 import matplotlib.pyplot as plt
@@ -22,20 +22,29 @@ def do():
     create_graph(start, interval_end, results, graph_frame)
 
 
-def f(x):
-    # return sin(x)
-    # return x ** 2 - 4
-    return (x - 1) ** 3 - 2
+def f(key, x):
+    if key == 'sin(x)':
+        return sin(x)
+    elif key == 'x ** 2 - 4':
+        return x ** 2 - 4
+    elif key == '(x - 1) ** 3 - 2':
+        return (x - 1) ** 3 - 2
 
-def d(x):
-    # return cos(x)
-    # return 2 * x
-    return 3 * (x - 1) ** 2
+def d(key, x):
+    if key == 'sin(x)':
+        return cos(x)
+    elif key == 'x ** 2 - 4':
+        return 2 * x
+    elif key == '(x - 1) ** 3 - 2':
+        return 3 * (x - 1) ** 2
 
-def d2(x):
-    # return -sin(x)
-    # return 2
-    return 6 * (x - 1)
+def d2(key, x):
+    if key == 'sin(x)':
+        return -sin(x)
+    elif key == 'x ** 2 - 4':
+        return 2
+    elif key == '(x - 1) ** 3 - 2':
+        return 6 * (x - 1)
 
 
 def chord_method(start, ends, step, eps):
@@ -160,9 +169,6 @@ def create_table(results, tree):
     tree.pack()
 
 
-
-
-
 def create_blank():
     fig = plt.Figure(figsize=(8, 4), dpi=100)
     ax = fig.add_subplot(111)
@@ -251,7 +257,15 @@ table_frame = Frame(window)
 graph_frame = Frame(window)
 
 tree = create_blank()
+tkvar = StringVar(window)
+choices = {'sin(x)', 'x ** 2 - 4', '(x - 1) ** 3 - 2'}
+tkvar.set('sin(x)')
+key = 'sin(x)'
+popupMenu = OptionMenu(input_frame, tkvar, *choices)
+popupMenu['width'] = 12
+tkvar.trace('w', key=tkvar.get())
 
+func_label = Label(input_frame, text='Funrcion')
 start_label = Label(input_frame, text='Start', width=20)
 end_label = Label(input_frame, text='End', width=20)
 step_label = Label(input_frame, text='Step', width=20)
@@ -269,15 +283,17 @@ input_frame.grid(row=0, column=0)
 table_frame.grid(row=0, column=1)
 graph_frame.grid(row=1, column=1)
 
-start_label.grid(row=1)
-end_label.grid(row=3)
-step_label.grid(row=5)
-eps_label.grid(row=7)
+func_label.grid(row = 0)
+start_label.grid(row=2)
+end_label.grid(row=4)
+step_label.grid(row=6)
+eps_label.grid(row=8)
 
-start_entry.grid(row=2)
-end_entry.grid(row=4)
-step_entry.grid(row=6)
-eps_entry.grid(row=8)
+popupMenu.grid(row = 1, columnspan=4)
+start_entry.grid(row=3)
+end_entry.grid(row=5)
+step_entry.grid(row=7)
+eps_entry.grid(row=9)
 
 btn.grid(row=11, column=0, columnspan=4)
 
