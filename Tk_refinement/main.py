@@ -1,4 +1,4 @@
-from tkinter import Tk, Frame, Entry, Label, Button, CENTER, W, StringVar, OptionMenu
+from tkinter import Tk, Frame, Entry, Label, Button, CENTER, W, StringVar, OptionMenu, END
 from tkinter.ttk import Treeview
 
 import matplotlib.pyplot as plt
@@ -16,7 +16,7 @@ def do():
     step = float(step_entry.get())
     eps = float(eps_entry.get())
 
-    results = chord_method(start, interval_end, step, eps)
+    results = chord_method(key, start, interval_end, step, eps)
     create_table(results, tree)
 
     create_graph(start, interval_end, results, graph_frame)
@@ -47,16 +47,16 @@ def d2(key, x):
         return 6 * (x - 1)
 
 
-def chord_method(start, ends, step, eps):
+def chord_method(key, start, ends, step, eps):
 
-    def refinement(start, end, eps):
+    def refinement(key, start, end, eps):
         iterations = 0
-        if d(start) * d2(start) < 0:
+        if d(key, start) * d2(key, start) < 0:
             x = start
-            def calculate(x): return x - f(x) * (end - x) / (f(end) - f(x))
+            def calculate(x): return x - f(key, x) * (end - x) / (f(key, end) - f(key, x))
         else:
             x = end
-            def calculate(x): return x - f(x) * (start - x) / (f(start) - f(x))
+            def calculate(x): return x - f(key, x) * (start - x) / (f(key, start) - f(key, x))
 
         x_prev, x = x, calculate(x)
         while abs(x - x_prev) >= eps:
@@ -106,30 +106,30 @@ def chord_method(start, ends, step, eps):
 
     end = start + step
     while end < ends:
-        if abs(f(start)) < eps:
+        if abs(f(key, start)) < eps:
             x, iterations = start, 0
             roots += [{'root': x, 'iterations': iterations,
                        'start': start, 'end': end}]
-        elif abs(f(end)) < eps:
+        elif abs(f(key, end)) < eps:
             x, iterations = end, 0
             roots += [{'root': x, 'iterations': iterations,
                        'start': start, 'end': end}]
-        elif f(start) * f(end) < 0:
-            x, iterations = refinement(start, end, eps)
+        elif f(key, start) * f(key, end) < 0:
+            x, iterations = refinement(key, start, end, eps)
             roots += [{'root': x, 'iterations': iterations,
                        'start': start, 'end': end}]
         start, end = end, end + step
     else:
-        if abs(f(start)) < eps:
+        if abs(f(key, start)) < eps:
             x, iterations = start, 0
             roots += [{'root': x, 'iterations': iterations,
                        'start': start, 'end': ends}]
-        elif abs(f(ends)) < eps:
+        elif abs(f(key, ends)) < eps:
             x, iterations = ends, 0
             roots += [{'root': x, 'iterations': iterations,
                        'start': start, 'end': ends}]
-        elif f(start) * f(ends) < 0:
-            x, iterations = refinement(start, ends, eps)
+        elif f(key, start) * f(key, ends) < 0:
+            x, iterations = refinement(key, start, ends, eps)
             roots += [{'root': x, 'iterations': iterations,
                        'start': start, 'end': ends}]
 
@@ -138,23 +138,29 @@ def chord_method(start, ends, step, eps):
     return roots
 
 
-def bisect(start, ends, step):
+def bisect(key, start, ends, step):
+    if key == 'sin(x)':
+        def d22(x): return -sin(x)
+    elif key == 'x ** 2 - 4':
+        def d22(x): return 2
+    elif key == '(x - 1) ** 3 - 2':
+        def d22(x): return 6 * (x - 1)
     end = start + step
     inflation = []
     eps = 1e-7
     round_to = abs(int(floor(log10(eps))))
     while start < ends:
-        if abs(d2(start)) < 1e-3:
+        if abs(d2(key, start)) < 1e-3:
             inflation.append(round(start, round_to))
-        elif abs(d2(end)) < 1e-3:
+        elif abs(d2(key, end)) < 1e-3:
             inflation.append(round(end, round_to))
-        elif d2(start) * d2(end) < 0:
-            x = optimize.bisect(d2, start, end, rtol=eps)
+        elif d2(key, start) * d2(key, end) < 0:
+            x = optimize.bisect(d22, start, end, rtol=eps)
             inflation.append(round(x, round_to))
         start, end = end, end + step
     else:
-        if d2(start) * d2(ends) < 0:
-            x = optimize.bisect(d2, start, ends, rtol=1e-3)
+        if d2(key, start) * d2(key, ends) < 0:
+            x = optimize.bisect(d22, start, ends, rtol=1e-3)
             inflation.append(round(x, round_to))
 
     return inflation
@@ -210,7 +216,7 @@ def create_graph(start, interval_end, results, graph_frame):
     x = np.arange(start, interval_end, 0.01)
     y = []
     for i in x:
-        y.append(f(i))
+        y.append(f(key, i))
 
     root_x = []
     root_y = []
@@ -218,10 +224,10 @@ def create_graph(start, interval_end, results, graph_frame):
         root_x.append(float(dic['root']))
         root_y.append(0)           
 
-    inf_x = np.array(bisect(start, interval_end, 0.1))
+    inf_x = np.array(bisect(key, start, interval_end, 0.1))
     inf_y = []
     for i in inf_x:
-        inf_y.append(f(i))
+        inf_y.append(f(key, i))
 
     fig = plt.Figure(figsize=(8, 4), dpi=100)
 
@@ -247,6 +253,12 @@ def create_graph(start, interval_end, results, graph_frame):
     toolbar = NavigationToolbar2Tk(canvas, graph_frame)
     toolbar.update()
 
+def change_key(*args):
+    global key, start_entry, end_entry, step_entry
+    key = tkvar.get()
+    start_entry.delete(0, END)
+    end_entry.delete(0, END)
+    step_entry.delete(0, END)
 
 window = Tk()
 window.title('Root refinement with Chord method')
@@ -263,7 +275,7 @@ tkvar.set('sin(x)')
 key = 'sin(x)'
 popupMenu = OptionMenu(input_frame, tkvar, *choices)
 popupMenu['width'] = 12
-tkvar.trace('w', key=tkvar.get())
+tkvar.trace('w', change_key)
 
 func_label = Label(input_frame, text='Funrcion')
 start_label = Label(input_frame, text='Start', width=20)
