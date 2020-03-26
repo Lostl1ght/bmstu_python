@@ -6,7 +6,7 @@ print('Input nums:')
 print(a1, '\n', a2, sep='')
 
 
-def converter(a1, a2):
+def converter(a1: str, a2: str) -> (str, str, int, int):
     c1 = ''
     for i in a1:
         if i == '.':
@@ -52,7 +52,7 @@ def converter(a1, a2):
     return bb1, bb2, length, dot_len
 
 
-def normalize(c, dot_len, minus):
+def normalize(c: str, dot_len: int, minus: bool) -> str:
     k = 0
     if dot_len > 0:
         c = c[:dot_len] + '.' + c[dot_len:]
@@ -64,10 +64,11 @@ def normalize(c, dot_len, minus):
         i += 1
     if minus:
         return '-' + c[i:len(c) - k]
+    
     return c[i:len(c) - k]
 
 
-def adder(b1, b2, length):
+def adder(b1: str, b2: str, length: int) -> (str, bool):
     c = ''
     flag = False
     for i in range(length):
@@ -97,7 +98,7 @@ def adder(b1, b2, length):
     return c, False
 
 
-def subtractor(b1, b2, length):
+def subtractor(b1: str, b2: str, length: int) -> (str, bool):
     minus = False
     if b1[::-1] < b2[::-1]:
         b1, b2 = b2, b1
