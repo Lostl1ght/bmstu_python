@@ -254,11 +254,17 @@ def create_graph(start, interval_end, results, graph_frame):
     toolbar.update()
 
 def change_key(*args):
-    global key, start_entry, end_entry, step_entry
+    global key, start_entry, end_entry, step_entry, graph_frame, tree
     key = tkvar.get()
     start_entry.delete(0, END)
     end_entry.delete(0, END)
     step_entry.delete(0, END)
+    graph_frame.pack_forget()
+    graph_frame = Frame(window)
+    graph_frame.grid(row=1, column=1)
+    tree.pack_forget()
+    create_blank()
+
 
 window = Tk()
 window.title('Root refinement with Chord method')
