@@ -132,9 +132,16 @@ def subtractor(b1: str, b2: str, length: int) -> (str, bool):
 
 
 operation = True
+def choose(b: bool) -> None:
+    global operation
+    operation = b
+    if b:
+        fu_label['text'] = '+'
+    else:
+        fu_label['text'] = '-'
 
 
-def calculate() -> None:
+def calculate(operation) -> None:
     b1, b2, length, dot_len = converter(a_entry1.get(), a_entry2.get())
     if operation:
         c, minus = adder(b1, b2, length)
@@ -167,21 +174,21 @@ btn_1 = Button(window, text='1', font = 20)
 btn_1.place(x=90, y=170, width = 50, height = 50)
 btn_dot = Button(window, text='.', font = 20)
 btn_dot.place(x=140, y=170, width = 50, height = 50)
-btn_plus = Button(window, text='+', font = 20)
+btn_plus = Button(window, text='+', font = 20, command=lambda: choose(True))
 btn_plus.place(x=190, y=170, width = 50, height = 50)
 
 btn_up = Button(window, text='↑', font = 20)
 btn_up.place(x=40, y=220, width = 50, height = 50)
 btn_down = Button(window, text='↓', font = 20)
 btn_down.place(x=90, y=220, width = 50, height = 50)
-btn_minus = Button(window, text='-', font = 20)
+btn_del = Button(window, text='⇐', font = 20)
+btn_del.place(x=140, y=220, width = 50, height = 50)
+btn_minus = Button(window, text='-', font = 20, command=lambda: choose(False))
 btn_minus.place(x=190, y=220, width = 50, height = 50)
 
-btn_eq = Button(window, text='=', font = 20, command=calculate)
+btn_eq = Button(window, text='=', font = 20, command=lambda: calculate(operation))
 btn_eq.place(x=40, y=270, width = 100, height = 50) 
-btn_del = Button(window, text='⇐', font = 20)
-btn_del.place(x=140, y=270, width = 50, height = 50)
 btn_clear = Button(window, text='X', font = 20)
-btn_clear.place(x=190, y=270, width = 50, height = 50)
+btn_clear.place(x=140, y=270, width = 50, height = 50)
 
 window.mainloop()
