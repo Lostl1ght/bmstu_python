@@ -130,17 +130,58 @@ def subtractor(b1: str, b2: str, length: int) -> (str, bool):
 
     return c, minus
 
+
+operation = True
+
+
+def calculate() -> None:
+    b1, b2, length, dot_len = converter(a_entry1.get(), a_entry2.get())
+    if operation:
+        c, minus = adder(b1, b2, length)
+    else:
+        c, minus = subtractor(b1, b2, length)
+    res = normalize(c, dot_len, minus)
+
+    res_label['text'] = res
+
 window = Tk()
 window.title("Калькулятор")
 window.geometry('280x345')
 
-a_entry = [True, True]
-a_entry[0] = Entry(window, font = 20).grid(row=0, columnspan=4)
-a_entry[1] = Entry(window, font = 20).grid(row=2, columnspan=4)
 
-fu_label = Label(window, text='+', font = 20).grid(row=1, columnspan=4)
-eq_label = Label(window, text='=', font = 20).grid(row=3, columnspan=4)
-res_label = Label(window, text='', font = 20).grid(row=4, columnspan=4)
+a_entry1 = Entry(window, font = 20)
+a_entry1.place(x=145, y=15, anchor='c')
+a_entry2 = Entry(window, font = 20)
+a_entry2.place(x=145, y=77, anchor='c')
 
+fu_label = Label(window, text='+', font = 20)
+fu_label.place(x=145, y=47, anchor='c')
+eq_label = Label(window, text='=', font = 20)
+eq_label.place(x=145, y=110, anchor='c')
+res_label = Label(window, text='asd', font = 20)
+res_label.place(x=145, y=140, anchor='c')
+
+btn_0 = Button(window, text='0', font = 20)
+btn_0.place(x=40, y=170, width = 50, height = 50)
+btn_1 = Button(window, text='1', font = 20)
+btn_1.place(x=90, y=170, width = 50, height = 50)
+btn_dot = Button(window, text='.', font = 20)
+btn_dot.place(x=140, y=170, width = 50, height = 50)
+btn_plus = Button(window, text='+', font = 20)
+btn_plus.place(x=190, y=170, width = 50, height = 50)
+
+btn_up = Button(window, text='↑', font = 20)
+btn_up.place(x=40, y=220, width = 50, height = 50)
+btn_down = Button(window, text='↓', font = 20)
+btn_down.place(x=90, y=220, width = 50, height = 50)
+btn_minus = Button(window, text='-', font = 20)
+btn_minus.place(x=190, y=220, width = 50, height = 50)
+
+btn_eq = Button(window, text='=', font = 20, command=calculate)
+btn_eq.place(x=40, y=270, width = 100, height = 50) 
+btn_del = Button(window, text='⇐', font = 20)
+btn_del.place(x=140, y=270, width = 50, height = 50)
+btn_clear = Button(window, text='X', font = 20)
+btn_clear.place(x=190, y=270, width = 50, height = 50)
 
 window.mainloop()
