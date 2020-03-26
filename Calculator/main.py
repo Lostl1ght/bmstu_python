@@ -141,7 +141,35 @@ def choose(b: bool) -> None:
         fu_label['text'] = '-'
 
 
+def check(a1: str, a2: str) -> Bool:
+    error = False
+    for i in a_entry[0].get():
+        if i not in '01.':
+            error = True
+            break
+    for i in a_entry[1].get():
+        if i not in '01.':
+            error = True
+            break
+    if a_entry[0].get().count('.') > 1:
+        error = True
+    if a_entry[1].get().count('.') > 1:
+        error = True
+    if '.' in a_entry[0].get() and a_entry[0].get().index('.') == 0:
+        error = True
+    if '.' in a_entry[1].get() and a_entry[1].get().index('.') == 0:
+        error = True
+    if error:
+        mb.showerror("Ошибка ввода", "Введите верные числа!")
+        res_label['text'] = 'ОШИБКА'
+        return True
+    else:
+        return False
+    
+
 def calculate(operation) -> None:
+    if check(a_entry[0].get(), a_entry[1].get()):
+        return
     b1, b2, length, dot_len = converter(a_entry[0].get(), a_entry[1].get())
     if operation:
         c, minus = adder(b1, b2, length)
