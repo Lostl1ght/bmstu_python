@@ -142,7 +142,7 @@ def choose(b: bool) -> None:
 
 
 def calculate(operation) -> None:
-    b1, b2, length, dot_len = converter(a_entry1.get(), a_entry2.get())
+    b1, b2, length, dot_len = converter(a_entry[0].get(), a_entry[1].get())
     if operation:
         c, minus = adder(b1, b2, length)
     else:
@@ -155,18 +155,18 @@ window = Tk()
 window.title("Калькулятор")
 window.geometry('280x345')
 
-
-a_entry1 = Entry(window, font = 20)
-a_entry1.place(x=145, y=15, anchor='c')
-a_entry2 = Entry(window, font = 20)
-a_entry2.place(x=145, y=77, anchor='c')
+a_entry = [Entry, Entry]
+a_entry[0] = Entry(window, font = 20, width=28, justify=RIGHT)
+a_entry[0].place(x=140, y=15, anchor='c')
+a_entry[1] = Entry(window, font = 20, width=28, justify=RIGHT)
+a_entry[1].place(x=140, y=77, anchor='c')
 
 fu_label = Label(window, text='+', font = 20)
-fu_label.place(x=145, y=47, anchor='c')
+fu_label.place(x=140, y=47, anchor='c')
 eq_label = Label(window, text='=', font = 20)
-eq_label.place(x=145, y=110, anchor='c')
-res_label = Label(window, text='asd', font = 20)
-res_label.place(x=145, y=140, anchor='c')
+eq_label.place(x=140, y=110, anchor='c')
+res_label = Label(window, text='', font = 20, width=28)
+res_label.place(x=140, y=140, anchor='c')
 
 btn_0 = Button(window, text='0', font = 20)
 btn_0.place(x=40, y=170, width = 50, height = 50)
