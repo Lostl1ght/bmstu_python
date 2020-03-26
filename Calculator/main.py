@@ -1,4 +1,5 @@
-
+from tkinter import *
+from tkinter import messagebox as mb
 
 
 def converter(a1: str, a2: str) -> (str, str, int, int):
@@ -129,3 +130,17 @@ def subtractor(b1: str, b2: str, length: int) -> (str, bool):
 
     return c, minus
 
+window = Tk()
+window.title("Калькулятор")
+window.geometry('280x345')
+
+a_entry = [True, True]
+a_entry[0] = Entry(window, font = 20).grid(row=0, columnspan=4)
+a_entry[1] = Entry(window, font = 20).grid(row=2, columnspan=4)
+
+fu_label = Label(window, text='+', font = 20).grid(row=1, columnspan=4)
+eq_label = Label(window, text='=', font = 20).grid(row=3, columnspan=4)
+res_label = Label(window, text='', font = 20).grid(row=4, columnspan=4)
+
+
+window.mainloop()
