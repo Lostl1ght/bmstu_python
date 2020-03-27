@@ -34,9 +34,11 @@ def converter(a1: str, a2: str) -> (str, str, int, int):
     len_c1 = len(c1)
     if '-' in c1:
         len_c1 -= 1
+        c1 = c1[1:]
     len_c2 = len(c2)
     if '-' in c2:
         len_c2 -= 1
+        c2 = c2[1:]
 
     while length < max(len_c1, len_c2):
         length += 1
@@ -48,7 +50,7 @@ def converter(a1: str, a2: str) -> (str, str, int, int):
     return bb1, bb2, length, dot_len
 
 
-def normalizer(c: str, dot_len: int, minus: bool) -> str:
+def normalizer(c: str, dot_len: int, minus_after_operation: bool, minus_because_signs: bool) -> str:
     k = 0
     if dot_len > 0:
         c = c[:dot_len] + '.' + c[dot_len:]
@@ -58,10 +60,10 @@ def normalizer(c: str, dot_len: int, minus: bool) -> str:
     i = 0
     while c[i] == '0':
         i += 1
-    if minus:
-        return '-' + c[i:len(c) - k]
     
-    return c[i:len(c) - k]
+    if minus_after_operation == minus_because_signs:
+        return c[i:len(c) - k]    
+    return '-' + c[i:len(c) - k]
 
 
 def adder(b1: str, b2: str, length: int) -> (str, bool):
@@ -91,14 +93,14 @@ def adder(b1: str, b2: str, length: int) -> (str, bool):
     if flag:
         c += '1'
 
-    return c, False
+    return c, True
 
 
 def subtractor(b1: str, b2: str, length: int) -> (str, bool):
-    minus = False
+    minus = True
     if b1[::-1] < b2[::-1]:
         b1, b2 = b2, b1
-        minus = True
+        minus = False
     c = ''
     flag = False
     for i in range(length):        
@@ -151,36 +153,85 @@ def check(a1: str, a2: str) -> bool:
     if a1 == '' or a2 == '':
         error = True
     for i in a1:
-        if i not in '01.':
+        if i not in '01.-':
             error = True
             break
     for i in a2:
-        if i not in '01.':
+        if i not in '01.-':
             error = True
             break
     if a1.count('.') > 1:
         error = True
     if a2.count('.') > 1:
         error = True
+    if a1.count('-') > 1:
+        error = True
+    if a2.count('-') > 1:
+        error = True 
+    if '-' in a1 and a1.index('-') != 0 or '-' in a2 and a2.index('-') != 0:
+        error = True
+    
     if error:
         mb.showerror('Ошибка ввода', 'Введите верные числа!')
         res_label['text'] = 'ОШИБКА'
         return True
     else:
         return False
+
+
+def signum(a1: str, a2: str) -> (bool, bool):
+    sign_a1 = True
+    sign_a2 = True
+    if a1[0] == '-':
+        sign_a1 = False
+    
+    if a2[0] == '-':
+        sign_a2 = False
+
+    return sign_a1, sign_a2
     
 
-def calculate(operation) -> None:
+def calculate(operation: bool) -> None:
     if check(a_entry[0].get(), a_entry[1].get()):
         return
+    sign_a1, sign_a2 = signum(a_entry[0].get(), a_entry[1].get())
     b1, b2, length, dot_len = converter(a_entry[0].get(), a_entry[1].get())
     if operation:
-        fu_label['text'] = '+'
-        c, minus = adder(b1, b2, length)
+        if sign_a1 is True and sign_a2 is True:
+            c, minus_after_operation = adder(b1, b2, length)
+            minus_because_signs = True
+        if sign_a1 is False and sign_a2 is False:
+            c, minus_after_operation = adder(b1, b2, length)
+            minus_because_signs = False        
+        if sign_a1 is True and sign_a2 is False:
+            c, minus_after_operation = subtractor(b1, b2, length)
+            if b1[::-1] >= b2[::-1]:
+                minus_because_signs = True
+            else:
+                minus_because_signs = False
+        if sign_a1 is False and sign_a2 is True:
+            c, minus_after_operation = subtractor(b1, b2, length)
+            if b1[::-1] >= b2[::-1]:
+                minus_because_signs = False
+            else:
+                minus_because_signs = True
     else:
-        c, minus = subtractor(b1, b2, length)
-        fu_label['text'] = '-'
-    res = normalizer(c, dot_len, minus)
+        if sign_a1 is True and sign_a2 is True:
+            c, minus_after_operation = subtractor(b1, b2, length)
+            minus_because_signs = True
+        if sign_a1 is False and sign_a2 is True:
+            c, minus_after_operation = adder(b1, b2, length)
+            minus_because_signs = False
+        if sign_a1 is False and sign_a2 is False:
+            c, minus_after_operation = adder(b1, b2, length)
+            if b1[::-1] >= b2[::-1]:
+                minus_because_signs = False
+            else:
+                minus_because_signs = True
+        if sign_a1 is True and sign_a2 is False:
+            c, minus_after_operation = adder(b1, b2, length)
+            minus_because_signs = True
+    res = normalizer(c, dot_len, minus_after_operation, minus_because_signs)
 
     res_label['text'] = res
 
