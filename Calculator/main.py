@@ -58,11 +58,17 @@ def normalizer(c: str, dot_len: int, minus_after_operation: bool, minus_because_
             k += 1
     c = c[::-1]
     i = 0
+    if '1' not in c:
+        return '0'
     while c[i] == '0':
         i += 1
     
-    if minus_after_operation == minus_because_signs:
-        return c[i:len(c) - k]    
+    if c[i] == '.':
+        i -= 1
+    if c[len(c) - k - 1] == '.':
+        k += 1
+    if minus_after_operation == minus_because_signs:        
+        return c[i:len(c) - k]   
     return '-' + c[i:len(c) - k]
 
 
@@ -172,7 +178,6 @@ def check(a1: str, a2: str) -> bool:
         error = True
     
     if error:
-        mb.showerror('Ошибка ввода', 'Введите верные числа!')
         res_label['text'] = 'ОШИБКА'
         return True
     else:
@@ -248,10 +253,10 @@ def delete_one(opt: int) -> None:
 
 
 def showabout() -> None:
-    win = Toplevel(window, width=410, height=150)
+    win = Toplevel(window, width=410, height=200)
     win.title('Информация о программе и её владельце')
     lblwin = Label(win, text = 'Калькулятор, \nскладывающий или вычитающий числа \nв двоичной системе счисления' +
-                                '\nбез перевода в десятичную. \n© Буланый Константин, ИУ7-26Б', font  = '8')
+                                '\nбез перевода в десятичную. \n© Буланый Константин, ИУ7-26Б', font  = '1')
     lblwin.place(relx=0.5, rely=0.35, anchor='c')
     close_button = Button(win, text='Закрыть', command = lambda: win.destroy())
     close_button.place(relx = 0.45, rely = 0.7, width = 65, height = 35)
@@ -276,6 +281,19 @@ def focus1(event: 'tkinter.Event') -> None:
 def focus2(event: 'tkinter.Event') -> None:
     global which
     which = 1
+
+
+def invert() -> None:
+    num = a_entry[which].get()
+    if num == '':
+        return
+    if num[0] == '-':
+        num = num[1:]
+    else:
+        num = '-' + num
+    a_entry[which].delete(0, END)
+    a_entry[which].insert(END, num)
+    res_label.config(text = '')
 
 
 window = Tk()
@@ -306,21 +324,23 @@ btn_0.place(x=40, y=170, width = 50, height = 50)
 btn_1 = Button(window, text='1', font = 20, command=lambda: insert_digit('1'))
 btn_1.place(x=90, y=170, width = 50, height = 50)
 btn_plus = Button(window, text='+', font = 20, command=lambda: choose(True))
-btn_plus.place(x=190, y=170, width = 50, height = 50)
+btn_plus.place(x=140, y=170, width = 50, height = 50)
+btn_inv = Button(window, text='INV', command=invert)
+btn_inv.place(x=190, y=170, width = 50, height = 50)
 
 btn_dot = Button(window, text='.', font = 20, command=lambda: insert_digit('.'))
 btn_dot.place(x=90, y=220, width = 50, height = 50)
 btn_up = Button(window, text='↑', font = 20, command=lambda: set_focus(0))
 btn_up.place(x=40, y=220, width = 50, height = 50)
 btn_minus = Button(window, text='-', font = 20, command=lambda: choose(False))
-btn_minus.place(x=190, y=220, width = 50, height = 50)
+btn_minus.place(x=140, y=220, width = 50, height = 50)
+btn_del = Button(window, text='⇐', font = 20, background='#ebb95e', command=lambda: a_entry[which].delete(first = len(a_entry[which].get()) - 1, last = len(a_entry[which].get())))
+btn_del.place(x=190, y=220, width = 50, height = 50) 
 
 btn_down = Button(window, text='↓', font = 20, command=lambda: set_focus(1))
 btn_down.place(x=40, y=270, width = 50, height = 50)
 btn_eq = Button(window, text='=', font = 20, command=lambda: calculate(operation), background='#9ed65e')
-btn_eq.place(x=90, y=270, width = 50, height = 50)
-btn_del = Button(window, text='⇐', font = 20, background='#ebb95e', command=lambda: a_entry[which].delete(first = len(a_entry[which].get()) - 1, last = len(a_entry[which].get())))
-btn_del.place(x=140, y=270, width = 50, height = 50) 
+btn_eq.place(x=90, y=270, width = 100, height = 50)
 btn_clear = Button(window, text='X', font = 20, command=delete_all, background='#eb6c52')
 btn_clear.place(x=190, y=270, width = 50, height = 50)
 
@@ -334,6 +354,7 @@ del_menu.add_command(label='Очистить все поля', command=delete_al
 calc_menu = Menu()
 calc_menu.add_command(label='Сложить числа', command=lambda: calculate(True))
 calc_menu.add_command(label='Вычесть числа', command=lambda: calculate(False))
+calc_menu.add_command(label='Изменить знак числа', command=invert)
 
 inf_menu = Menu()
 inf_menu.add_command(label = 'Информация о программе и её владельце', command=showabout)
