@@ -1,4 +1,4 @@
-from tkinter import *
+from tkinter import END, Toplevel, Label, Button, Tk, Entry, CENTER, Menu
 from tkinter import messagebox as mb
 
 
@@ -62,13 +62,13 @@ def normalizer(c: str, dot_len: int, minus_after_operation: bool, minus_because_
         return '0'
     while c[i] == '0':
         i += 1
-    
+
     if c[i] == '.':
         i -= 1
     if c[len(c) - k - 1] == '.':
         k += 1
-    if minus_after_operation == minus_because_signs:        
-        return c[i:len(c) - k]   
+    if minus_after_operation == minus_because_signs:
+        return c[i:len(c) - k]
     return '-' + c[i:len(c) - k]
 
 
@@ -109,8 +109,8 @@ def subtractor(b1: str, b2: str, length: int) -> (str, bool):
         minus = False
     c = ''
     flag = False
-    for i in range(length):        
-        if b1[i] == '0' and b2[i] == '0':            
+    for i in range(length):
+        if b1[i] == '0' and b2[i] == '0':
             if flag:
                 c += '1'
                 flag = True
@@ -121,7 +121,7 @@ def subtractor(b1: str, b2: str, length: int) -> (str, bool):
         if b1[i] == '1' and b2[i] == '0':
             if flag:
                 c += '0'
-                
+
             else:
                 c += '1'
             flag = False
@@ -132,7 +132,7 @@ def subtractor(b1: str, b2: str, length: int) -> (str, bool):
             else:
                 c += '1'
             flag = True
-        
+
         if b1[i] == '1' and b2[i] == '1':
             if flag:
                 c += '1'
@@ -145,6 +145,8 @@ def subtractor(b1: str, b2: str, length: int) -> (str, bool):
 
 
 operation = True
+
+
 def choose(b: bool) -> None:
     global operation
     operation = b
@@ -173,10 +175,10 @@ def check(a1: str, a2: str) -> bool:
     if a1.count('-') > 1:
         error = True
     if a2.count('-') > 1:
-        error = True 
+        error = True
     if '-' in a1 and a1.index('-') != 0 or '-' in a2 and a2.index('-') != 0:
         error = True
-    
+
     if error:
         res_label['text'] = 'ОШИБКА'
         return True
@@ -189,12 +191,12 @@ def signum(a1: str, a2: str) -> (bool, bool):
     sign_a2 = True
     if a1[0] == '-':
         sign_a1 = False
-    
+
     if a2[0] == '-':
         sign_a2 = False
 
     return sign_a1, sign_a2
-    
+
 
 def calculate(operation: bool) -> None:
     if check(a_entry[0].get(), a_entry[1].get()):
@@ -207,7 +209,7 @@ def calculate(operation: bool) -> None:
             minus_because_signs = True
         if sign_a1 is False and sign_a2 is False:
             c, minus_after_operation = adder(b1, b2, length)
-            minus_because_signs = False        
+            minus_because_signs = False
         if sign_a1 is True and sign_a2 is False:
             c, minus_after_operation = subtractor(b1, b2, length)
             if b1[::-1] >= b2[::-1]:
@@ -244,24 +246,27 @@ def calculate(operation: bool) -> None:
 def delete_all() -> None:
     a_entry[0].delete(0, END)
     a_entry[1].delete(0, END)
-    res_label.config(text = '')
+    res_label.config(text='')
 
 
 def delete_one(opt: int) -> None:
     a_entry[opt].delete(0, END)
-    res_label.config(text = '')
+    res_label.config(text='')
 
 
 def showabout() -> None:
     win = Toplevel(window, width=410, height=200)
     win.title('Информация о программе и её владельце')
-    lblwin = Label(win, text = 'Калькулятор, \nскладывающий или вычитающий числа \nв двоичной системе счисления' +
-                                '\nбез перевода в десятичную. \n© Буланый Константин, ИУ7-26Б', font  = '1')
+    lblwin = Label(win, text='Калькулятор, \nскладывающий или вычитающий числа \nв двоичной системе счисления' +
+                   '\nбез перевода в десятичную. \n© Буланый Константин, ИУ7-26Б', font='1')
     lblwin.place(relx=0.5, rely=0.35, anchor='c')
-    close_button = Button(win, text='Закрыть', command = lambda: win.destroy())
-    close_button.place(relx = 0.45, rely = 0.7, width = 65, height = 35)
+    close_button = Button(win, text='Закрыть', command=lambda: win.destroy())
+    close_button.place(relx=0.45, rely=0.7, width=65, height=35)
+
 
 which = 0
+
+
 def insert_digit(s: str) -> None:
     a_entry[which].insert(END, s)
 
@@ -293,7 +298,7 @@ def invert() -> None:
         num = '-' + num
     a_entry[which].delete(0, END)
     a_entry[which].insert(END, num)
-    res_label.config(text = '')
+    res_label.config(text='')
 
 
 window = Tk()
@@ -304,51 +309,56 @@ window.bind('<Return>', calculate)
 
 
 a_entry = [Entry, Entry]
-a_entry[0] = Entry(window, font = 20, width=28, justify=CENTER)
+a_entry[0] = Entry(window, font=20, width=28, justify=CENTER)
 a_entry[0].place(x=140, y=15, anchor='c')
-a_entry[1] = Entry(window, font = 20, width=28, justify=CENTER)
+a_entry[1] = Entry(window, font=20, width=28, justify=CENTER)
 a_entry[1].place(x=140, y=77, anchor='c')
 a_entry[0].bind('<Button-1>', focus1)
 a_entry[1].bind('<Button-1>', focus2)
 a_entry[0].focus_set()
 
-fu_label = Label(window, text='+', font = 20)
+fu_label = Label(window, text='+', font=20)
 fu_label.place(x=140, y=47, anchor='c')
-eq_label = Label(window, text='=', font = 20)
+eq_label = Label(window, text='=', font=20)
 eq_label.place(x=140, y=110, anchor='c')
-res_label = Label(window, text='', font = 20, width=28, background='#ffffff')
+res_label = Label(window, text='', font=20, width=28, background='#ffffff')
 res_label.place(x=140, y=140, anchor='c')
 
-btn_0 = Button(window, text='0', font = 20, command=lambda: insert_digit('0'))
-btn_0.place(x=40, y=170, width = 50, height = 50)
-btn_1 = Button(window, text='1', font = 20, command=lambda: insert_digit('1'))
-btn_1.place(x=90, y=170, width = 50, height = 50)
-btn_plus = Button(window, text='+', font = 20, command=lambda: choose(True))
-btn_plus.place(x=140, y=170, width = 50, height = 50)
+btn_0 = Button(window, text='0', font=20, command=lambda: insert_digit('0'))
+btn_0.place(x=40, y=170, width=50, height=50)
+btn_1 = Button(window, text='1', font=20, command=lambda: insert_digit('1'))
+btn_1.place(x=90, y=170, width=50, height=50)
+btn_plus = Button(window, text='+', font=20, command=lambda: choose(True))
+btn_plus.place(x=140, y=170, width=50, height=50)
 btn_inv = Button(window, text='INV', command=invert)
-btn_inv.place(x=190, y=170, width = 50, height = 50)
+btn_inv.place(x=190, y=170, width=50, height=50)
 
-btn_dot = Button(window, text='.', font = 20, command=lambda: insert_digit('.'))
-btn_dot.place(x=90, y=220, width = 50, height = 50)
-btn_up = Button(window, text='↑', font = 20, command=lambda: set_focus(0))
-btn_up.place(x=40, y=220, width = 50, height = 50)
-btn_minus = Button(window, text='-', font = 20, command=lambda: choose(False))
-btn_minus.place(x=140, y=220, width = 50, height = 50)
-btn_del = Button(window, text='⇐', font = 20, background='#ebb95e', command=lambda: a_entry[which].delete(first = len(a_entry[which].get()) - 1, last = len(a_entry[which].get())))
-btn_del.place(x=190, y=220, width = 50, height = 50) 
+btn_dot = Button(window, text='.', font=20, command=lambda: insert_digit('.'))
+btn_dot.place(x=90, y=220, width=50, height=50)
+btn_up = Button(window, text='↑', font=20, command=lambda: set_focus(0))
+btn_up.place(x=40, y=220, width=50, height=50)
+btn_minus = Button(window, text='-', font=20, command=lambda: choose(False))
+btn_minus.place(x=140, y=220, width=50, height=50)
+btn_del = Button(window, text='⇐', font=20, background='#ebb95e', command=lambda: a_entry[which].delete(
+    first=len(a_entry[which].get()) - 1, last=len(a_entry[which].get())))
+btn_del.place(x=190, y=220, width=50, height=50)
 
-btn_down = Button(window, text='↓', font = 20, command=lambda: set_focus(1))
-btn_down.place(x=40, y=270, width = 50, height = 50)
-btn_eq = Button(window, text='=', font = 20, command=lambda: calculate(operation), background='#9ed65e')
-btn_eq.place(x=90, y=270, width = 100, height = 50)
-btn_clear = Button(window, text='X', font = 20, command=delete_all, background='#eb6c52')
-btn_clear.place(x=190, y=270, width = 50, height = 50)
+btn_down = Button(window, text='↓', font=20, command=lambda: set_focus(1))
+btn_down.place(x=40, y=270, width=50, height=50)
+btn_eq = Button(window, text='=', font=20, command=lambda: calculate(
+    operation), background='#9ed65e')
+btn_eq.place(x=90, y=270, width=100, height=50)
+btn_clear = Button(window, text='X', font=20,
+                   command=delete_all, background='#eb6c52')
+btn_clear.place(x=190, y=270, width=50, height=50)
 
 main_menu = Menu()
 
 del_menu = Menu()
-del_menu.add_command(label='Очистить первое поле ввода', command=lambda: delete_one(0))
-del_menu.add_command(label='Очистить второе поле ввода', command=lambda: delete_one(1))
+del_menu.add_command(label='Очистить первое поле ввода',
+                     command=lambda: delete_one(0))
+del_menu.add_command(label='Очистить второе поле ввода',
+                     command=lambda: delete_one(1))
 del_menu.add_command(label='Очистить все поля', command=delete_all)
 
 calc_menu = Menu()
@@ -357,7 +367,8 @@ calc_menu.add_command(label='Вычесть числа', command=lambda: calcula
 calc_menu.add_command(label='Изменить знак числа', command=invert)
 
 inf_menu = Menu()
-inf_menu.add_command(label = 'Информация о программе и её владельце', command=showabout)
+inf_menu.add_command(
+    label='Информация о программе и её владельце', command=showabout)
 
 main_menu.add_cascade(label='Очистка', menu=del_menu)
 main_menu.add_cascade(label='Операции', menu=calc_menu)
