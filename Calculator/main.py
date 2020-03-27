@@ -355,20 +355,22 @@ btn_clear.place(x=190, y=270, width=50, height=50)
 main_menu = Menu()
 
 del_menu = Menu()
-del_menu.add_command(label='Очистить первое поле ввода',
+del_menu.add_command(label='Очистить первое поле ввода     ',
                      command=lambda: delete_one(0))
-del_menu.add_command(label='Очистить второе поле ввода',
+del_menu.add_command(label='Очистить второе поле ввода     ',
                      command=lambda: delete_one(1))
-del_menu.add_command(label='Очистить все поля', command=delete_all)
+del_menu.add_command(label='Очистить все поля     ', command=delete_all)
 
 calc_menu = Menu()
-calc_menu.add_command(label='Сложить числа', command=lambda: calculate(True))
-calc_menu.add_command(label='Вычесть числа', command=lambda: calculate(False))
-calc_menu.add_command(label='Изменить знак числа', command=invert)
+calc_menu.add_command(label='Сложить числа     ',
+                      command=lambda: calculate(True))
+calc_menu.add_command(label='Вычесть числа     ',
+                      command=lambda: calculate(False))
+calc_menu.add_command(label='Изменить знак числа     ', command=invert)
 
 inf_menu = Menu()
 inf_menu.add_command(
-    label='Информация о программе и её владельце', command=showabout)
+    label='Информация о программе и её владельце     ', command=showabout)
 
 main_menu.add_cascade(label='Очистка', menu=del_menu)
 main_menu.add_cascade(label='Операции', menu=calc_menu)
