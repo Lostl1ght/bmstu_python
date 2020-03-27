@@ -1,5 +1,4 @@
 from tkinter import END, Toplevel, Label, Button, Tk, Entry, CENTER, Menu
-from tkinter import messagebox as mb
 
 
 def converter(a1: str, a2: str) -> (str, str, int, int):
@@ -238,9 +237,9 @@ def calculate(operation: bool) -> None:
         if sign_a1 is True and sign_a2 is False:
             c, minus_after_operation = adder(b1, b2, length)
             minus_because_signs = True
-    res = normalizer(c, dot_len, minus_after_operation, minus_because_signs)
+    result = normalizer(c, dot_len, minus_after_operation, minus_because_signs)
 
-    res_label['text'] = res
+    res_label['text'] = result
 
 
 def delete_all() -> None:
@@ -254,7 +253,7 @@ def delete_one(opt: int) -> None:
     res_label.config(text='')
 
 
-def showabout() -> None:
+def show_about() -> None:
     win = Toplevel(window, width=410, height=200)
     win.title('Информация о программе и её владельце')
     lblwin = Label(win, text='Калькулятор, \nскладывающий или вычитающий числа \nв двоичной системе счисления' +
@@ -288,16 +287,16 @@ def focus2(event: 'tkinter.Event') -> None:
     which = 1
 
 
-def invert() -> None:
-    num = a_entry[which].get()
+def invert(opt: int) -> None:
+    num = a_entry[opt].get()
     if num == '':
         return
     if num[0] == '-':
         num = num[1:]
     else:
         num = '-' + num
-    a_entry[which].delete(0, END)
-    a_entry[which].insert(END, num)
+    a_entry[opt].delete(0, END)
+    a_entry[opt].insert(END, num)
     res_label.config(text='')
 
 
@@ -328,15 +327,15 @@ btn_0 = Button(window, text='0', font=20, command=lambda: insert_digit('0'))
 btn_0.place(x=40, y=170, width=50, height=50)
 btn_1 = Button(window, text='1', font=20, command=lambda: insert_digit('1'))
 btn_1.place(x=90, y=170, width=50, height=50)
-btn_plus = Button(window, text='+', font=20, command=lambda: choose(True))
-btn_plus.place(x=140, y=170, width=50, height=50)
-btn_inv = Button(window, text='INV', command=invert)
+btn_dot = Button(window, text='.', font=20, command=lambda: insert_digit('.'))
+btn_dot.place(x=140, y=170, width=50, height=50)
+btn_inv = Button(window, text='INV', command=lambda: invert(which))
 btn_inv.place(x=190, y=170, width=50, height=50)
 
-btn_dot = Button(window, text='.', font=20, command=lambda: insert_digit('.'))
-btn_dot.place(x=90, y=220, width=50, height=50)
 btn_up = Button(window, text='↑', font=20, command=lambda: set_focus(0))
 btn_up.place(x=40, y=220, width=50, height=50)
+btn_plus = Button(window, text='+', font=20, command=lambda: choose(True))
+btn_plus.place(x=90, y=220, width=50, height=50)
 btn_minus = Button(window, text='-', font=20, command=lambda: choose(False))
 btn_minus.place(x=140, y=220, width=50, height=50)
 btn_del = Button(window, text='⇐', font=20, background='#ebb95e', command=lambda: a_entry[which].delete(
@@ -366,11 +365,14 @@ calc_menu.add_command(label='Сложить числа     ',
                       command=lambda: calculate(True))
 calc_menu.add_command(label='Вычесть числа     ',
                       command=lambda: calculate(False))
-calc_menu.add_command(label='Изменить знак числа     ', command=invert)
+calc_menu.add_command(
+    label='Изменить знак первого числа     ', command=lambda: invert(0))
+calc_menu.add_command(
+    label='Изменить знак второго числа     ', command=lambda: invert(1))
 
 inf_menu = Menu()
 inf_menu.add_command(
-    label='Информация о программе и её владельце     ', command=showabout)
+    label='Информация о программе и её владельце     ', command=show_about)
 
 main_menu.add_cascade(label='Очистка', menu=del_menu)
 main_menu.add_cascade(label='Операции', menu=calc_menu)
