@@ -106,35 +106,54 @@ def create_graph(graph_frame: 'Frame') -> None:
     canvas.get_tk_widget().pack()
 
 
+def sort():
+    try:
+        n_array = list(int(i) for i in n_array_entry.get().split())
+        ns_array = ', '.join(str(s) for s in n_array)
+        n_array_label['text'] = ns_array
+        insertion_bin(n_array)
+        s_array = ', '.join(str(s) for s in n_array)
+        s_array_label['text'] = s_array
+    except:
+        n_array_label['text'] = 'ERROR'
+
 window = Tk()
 window.title('Sorting methods research')
 window.resizable(0, 0)
 
+test_frame = Frame(window)
+test_frame.grid(row=0)
 ns_frame = Frame(window)
+ns_frame.grid(row=1)
 table_frame = Frame(window)
+table_frame.grid(row=2)
 graph_frame = Frame(window)
+graph_frame.grid(row=3)
 
 tree = create_blank()
 
+n_array_label = Label(test_frame, text='', width=30)
+n_array_label.grid(row=1, column=0)
+s_array_label = Label(test_frame, text='', width=30)
+s_array_label.grid(row=2, column=0)
+
+n_array_entry = Entry(test_frame, width=30)
+n_array_entry.grid(row=0, column=0)
+
+test_btn = btn = Button(test_frame, text='Input', width=15, command=sort)
+test_btn.grid(row=0, column=1)
+
 start_label = Label(ns_frame, text='N1', width=10)
+start_label.grid(row=0, column=0)
 step_label = Label(ns_frame, text='Step', width=10)
+step_label.grid(row=0, column=1)
 
 start_entry = Entry(ns_frame, width=20)
+start_entry.grid(row=1, column=0)
 step_entry = Entry(ns_frame, width=20)
+step_entry.grid(row=1, column=1)
 
 btn = Button(ns_frame, text='Input', width=15, command=do)
-
-ns_frame.grid(row=1)
-table_frame.grid(row=2)
-graph_frame.grid(row=3)
-
-
-start_label.grid(row=1, column=1)
-step_label.grid(row=1, column=3)
-start_entry.grid(row=1, column=2)
-step_entry.grid(row=1, column=4)
-
-
-btn.grid(row=1, column=5)
+btn.grid(row=1, column=3)
 
 window.mainloop()
