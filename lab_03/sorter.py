@@ -9,27 +9,50 @@ import numpy as np
 from math import log10, floor, sin, cos
 import scipy.optimize as optimize
 
-def do():
+def do() -> None:
     create_table(tree)
     create_graph(graph_frame)
 
 
-def create_table(tree):
+def insertion_bin(array: list) -> None:
+    def binsearch(array: list, value: int, start: int, end: int) -> int:
+        if start >= end:
+            if array[start] > value:
+                return start
+            else:
+                return start + 1
+
+        mid = (start + end) // 2
+
+        if array[mid] > value:
+            return binsearch(array, value, start, mid - 1)
+        elif array[mid] < value:
+            return binsearch(array, value, mid + 1, end)
+        else:
+            return mid
+
+    for i in range(1, len(array)):
+        pos = binsearch(array, array[i], 0, i - 1)
+        for j in range(i, pos, -1):
+            array[j], array[j - 1] = array[j - 1], array[j]
+
+
+def create_table(tree: 'Treeview') -> None:
     tree.delete(*tree.get_children())
 
-    un = ['Упорядоченный\nмассив\n', 'Случайный\nмассив\n', 'Упорядоченный в\nобратном порядке\nмассив\n']
+    text = ['Упорядоченный\nмассив\n', 'Случайный\nмассив\n', 'Упорядоченный в\nобратном порядке\nмассив\n']
 
     tree.heading('n1', text='2000', anchor=W)
     tree.heading('n2', text='2500', anchor=W)
     tree.heading('n3', text='3000', anchor=W)
 
     for n in range(3):
-        tree.insert('', n, values=(un[n], '1', '2', '3'))
+        tree.insert('', n, values=(text[n], '1', '2', '3'))
 
     tree.pack()
 
 
-def create_blank():
+def create_blank() -> None:
     fig = plt.Figure(figsize=(6, 3), dpi=100)
     ax = fig.add_subplot(111)
     ax.plot()
@@ -64,10 +87,10 @@ def create_blank():
     return tree
 
 
-def create_graph(graph_frame):
+def create_graph(graph_frame: 'Frame') -> None:
     graph_frame.pack_forget()
     graph_frame = Frame(window)
-    graph_frame.grid(row=1, column=1)
+    graph_frame.grid(row=3)
 
     x = [2000, 2500, 3000]
     y = [1, 10, 3]
@@ -87,31 +110,31 @@ window = Tk()
 window.title('Sorting methods research')
 window.resizable(0, 0)
 
-input_frame = Frame(window)
+ns_frame = Frame(window)
 table_frame = Frame(window)
 graph_frame = Frame(window)
 
 tree = create_blank()
 
-start_label = Label(input_frame, text='N1', width=20)
-step_label = Label(input_frame, text='Step', width=20)
+start_label = Label(ns_frame, text='N1', width=10)
+step_label = Label(ns_frame, text='Step', width=10)
 
-start_entry = Entry(input_frame, width=20)
-step_entry = Entry(input_frame, width=20)
+start_entry = Entry(ns_frame, width=20)
+step_entry = Entry(ns_frame, width=20)
 
-btn = Button(input_frame, text='Input', width=15, command=do)
+btn = Button(ns_frame, text='Input', width=15, command=do)
 
-input_frame.grid(row=0, column=0)
-table_frame.grid(row=0, column=1)
-graph_frame.grid(row=1, column=1)
-
-
-start_label.grid(row=1)
-step_label.grid(row=3)
-start_entry.grid(row=2)
-step_entry.grid(row=4)
+ns_frame.grid(row=1)
+table_frame.grid(row=2)
+graph_frame.grid(row=3)
 
 
-btn.grid(row=5, column=0, columnspan=4)
+start_label.grid(row=1, column=1)
+step_label.grid(row=1, column=3)
+start_entry.grid(row=1, column=2)
+step_entry.grid(row=1, column=4)
+
+
+btn.grid(row=1, column=5)
 
 window.mainloop()
