@@ -235,7 +235,7 @@ def create_graph(start, interval_end, results, graph_frame):
 
     ax.plot(x, y)
 
-    ax.set_title('y = f(x)')
+    ax.set_title('y = ' + tkvar.get())
     ax.set_ylabel('y')
     ax.set_xlabel('x')
 
