@@ -2,12 +2,10 @@ from tkinter import *
 from tkinter.ttk import Treeview, Style
 
 import matplotlib.pyplot as plt
-import matplotlib.lines as mlines
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
-import numpy as np
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import time
+from random import randint
 
-from math import log10, floor, sin, cos
-import scipy.optimize as optimize
 
 def do() -> None:
     create_table(tree)
@@ -40,7 +38,8 @@ def insertion_bin(array: list) -> None:
 def create_table(tree: 'Treeview') -> None:
     tree.delete(*tree.get_children())
 
-    text = ['Упорядоченный\nмассив\n', 'Случайный\nмассив\n', 'Упорядоченный в\nобратном порядке\nмассив\n']
+    text = ['Упорядоченный\nмассив\n', 'Случайный\nмассив\n',
+            'Упорядоченный в\nобратном порядке\nмассив\n']
 
     tree.heading('n1', text='2000', anchor=W)
     tree.heading('n2', text='2500', anchor=W)
@@ -62,10 +61,9 @@ def create_blank() -> None:
     canvas.draw()
     canvas.get_tk_widget().pack()
 
-    s = Style()
-    s.configure('Treeview', rowheight=30)
+    Style().configure('Treeview', rowheight=40)
 
-    tree = Treeview(table_frame, columns=('names', 'n1', 'n2', 'n3'),height=4)
+    tree = Treeview(table_frame, columns=('names', 'n1', 'n2', 'n3'), height=3)
 
     tree.column('#0', width=0, minwidth=0)
     tree.column('names', width=150, minwidth=150, anchor=W)
@@ -80,7 +78,8 @@ def create_blank() -> None:
 
     tree.insert('', 0, values=('Упорядоченный\nмассив\n', '', '', ''))
     tree.insert('', 1, values=('Случайный\nмассив\n', '', '', ''))
-    tree.insert('', 2, values=('Упорядоченный в\nобратном порядке\nмассив\n', '', '', ''))
+    tree.insert('', 2, values=(
+        'Упорядоченный в\nобратном порядке\n', '', '', ''))
 
     tree.pack()
 
@@ -100,14 +99,19 @@ def create_graph(graph_frame: 'Frame') -> None:
     ax = fig.add_subplot(111)
 
     ax.plot(x, y)
+    ax.set_yticks(y)
+    ax.set_xticks(x)
 
     canvas = FigureCanvasTkAgg(fig, master=graph_frame)
     canvas.draw()
     canvas.get_tk_widget().pack()
 
 
-def sort():
+def sort() -> None:
     try:
+        if n_array_entry.get() == '':
+            n_array_label['text'] = 'ERROR'
+            return
         n_array = list(int(i) for i in n_array_entry.get().split())
         ns_array = ', '.join(str(s) for s in n_array)
         n_array_label['text'] = ns_array
@@ -116,6 +120,61 @@ def sort():
         s_array_label['text'] = s_array
     except:
         n_array_label['text'] = 'ERROR'
+
+
+def gettimeofday() -> int:
+    return round(time.time() * 1000)
+
+
+def count_random(n: int, leng: int) -> float:
+    a = []
+    for i in range(n):
+        a.append(randint(-1000, 1000))
+
+    summ = 0
+    for i in range(leng):
+        print('Try', i + 1)
+        start = gettimeofday()
+        insertion_bin(a[:])
+        end = gettimeofday()
+        print(end - start)
+        summ += end - start
+
+    return summ / leng
+
+
+def count_up(n: int, leng: int) -> float:
+    a = []
+    for i in range(n):
+        a.append(i + 1)
+
+    summ = 0
+    for i in range(leng):
+        print('Try', i + 1)
+        start = gettimeofday()
+        insertion_bin(a[:])
+        end = gettimeofday()
+        print(end - start)
+        summ += end - start
+
+    return summ / leng
+
+
+def count_down(n: int, leng: int) -> float:
+    a = []
+    for i in range(n, 0, -1):
+        a.append(i + 1)
+
+    summ = 0
+    for i in range(leng):
+        print('Try', i + 1)
+        start = gettimeofday()
+        insertion_bin(a[:])
+        end = gettimeofday()
+        print(end - start)
+        summ += end - start
+
+    return summ / leng
 
 window = Tk()
 window.title('Sorting methods research')
@@ -132,17 +191,20 @@ graph_frame.grid(row=3)
 
 tree = create_blank()
 
+a_label = Label(test_frame, text='Array', width=30)
+a_label.grid(row=0, column=0)
 n_array_label = Label(test_frame, text='', width=30)
-n_array_label.grid(row=1, column=0)
+n_array_label.grid(row=2, column=0)
 s_array_label = Label(test_frame, text='', width=30)
-s_array_label.grid(row=2, column=0)
+s_array_label.grid(row=3, column=0)
 
 n_array_entry = Entry(test_frame, width=30)
-n_array_entry.grid(row=0, column=0)
+n_array_entry.grid(row=1, column=0)
 
 test_btn = btn = Button(test_frame, text='Input', width=15, command=sort)
-test_btn.grid(row=0, column=1)
+test_btn.grid(row=1, column=1)
 
+er_label = Label(ns_frame, text='', width=30)
 start_label = Label(ns_frame, text='N1', width=10)
 start_label.grid(row=0, column=0)
 step_label = Label(ns_frame, text='Step', width=10)
