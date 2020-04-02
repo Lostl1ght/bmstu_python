@@ -271,7 +271,7 @@ def show_about() -> None:
     win.title('Информация о программе и её владельце')
     lblwin = Label(win, text='Калькулятор, \nскладывающий или вычитающий числа \nв двоичной системе счисления' +
                    '\nбез перевода в десятичную. \n© Буланый Константин, ИУ7-26Б', font='1')
-    lblwin.place(relx=0.5, rely=0.35, anchor='c')
+    lblwin.place(relx=0.5, rely=0.35, anchor=CENTER)
     close_button = Button(win, text='Закрыть', command=lambda: win.destroy())
     close_button.place(relx=0.45, rely=0.7, width=65, height=35)
 
@@ -326,19 +326,19 @@ window.bind('<Return>', calculate)
 
 a_entry = [Entry, Entry]
 a_entry[0] = Entry(window, font=20, width=28, justify=CENTER)
-a_entry[0].place(x=140, y=15, anchor='c')
+a_entry[0].place(x=140, y=15, anchor=CENTER)
 a_entry[1] = Entry(window, font=20, width=28, justify=CENTER)
-a_entry[1].place(x=140, y=77, anchor='c')
+a_entry[1].place(x=140, y=77, anchor=CENTER)
 a_entry[0].bind('<Button-1>', focus1)
 a_entry[1].bind('<Button-1>', focus2)
 a_entry[0].focus_set()
 
 fu_label = Label(window, text='+', font=20)
-fu_label.place(x=140, y=47, anchor='c')
+fu_label.place(x=140, y=47, anchor=CENTER)
 eq_label = Label(window, text='=', font=20)
-eq_label.place(x=140, y=110, anchor='c')
+eq_label.place(x=140, y=110, anchor=CENTER)
 res_label = Label(window, text='', font=20, width=28, background='#ffffff')
-res_label.place(x=140, y=140, anchor='c')
+res_label.place(x=140, y=140, anchor=CENTER)
 
 btn_0 = Button(window, text='0', font=20, command=lambda: insert_digit('0'))
 btn_0.place(x=40, y=170, width=50, height=50)
