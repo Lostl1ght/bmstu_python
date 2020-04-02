@@ -1,7 +1,6 @@
 # Сортировка с бинарным поиском.
 
-
-from tkinter import W, Frame, Tk, Label, Entry, Button, Toplevel, HORIZONTAL
+from tkinter import Frame, Tk, Label, Entry, Button, Toplevel, HORIZONTAL, CENTER
 from tkinter.ttk import Treeview, Style, Progressbar
 
 import matplotlib.pyplot as plt
@@ -40,9 +39,9 @@ def create_table(tree: 'Treeview', rand: list, up: list, down: list) -> None:
 
     text = ['Ascending array', 'Random array', 'Descending array']
 
-    tree.heading('n1', text=n1_entry.get(), anchor=W)
-    tree.heading('n2', text=n2_entry.get(), anchor=W)
-    tree.heading('n3', text=n3_entry.get(), anchor=W)
+    tree.heading('n1', text=n1_entry.get(), anchor=CENTER)
+    tree.heading('n2', text=n2_entry.get(), anchor=CENTER)
+    tree.heading('n3', text=n3_entry.get(), anchor=CENTER)
 
     tree.insert('', 0, values=(text[0], str(
         up[0]) + ' ms', str(up[1]) + ' ms', str(up[2]) + ' ms'))
@@ -70,15 +69,15 @@ def create_blank() -> 'Treeview':
     tree = Treeview(table_frame, columns=('names', 'n1', 'n2', 'n3'), height=3)
 
     tree.column('#0', width=0, minwidth=0)
-    tree.column('names', width=150, minwidth=150, anchor=W)
-    tree.column('n1', width=150, minwidth=150, anchor=W)
-    tree.column('n2', width=150, minwidth=150, anchor=W)
-    tree.column('n3', width=150, minwidth=150, anchor=W)
+    tree.column('names', width=150, minwidth=150, anchor=CENTER)
+    tree.column('n1', width=150, minwidth=150, anchor=CENTER)
+    tree.column('n2', width=150, minwidth=150, anchor=CENTER)
+    tree.column('n3', width=150, minwidth=150, anchor=CENTER)
 
-    tree.heading('names', text='', anchor=W)
-    tree.heading('n1', text='N1', anchor=W)
-    tree.heading('n2', text='N2', anchor=W)
-    tree.heading('n3', text='N3', anchor=W)
+    tree.heading('names', text='', anchor=CENTER)
+    tree.heading('n1', text='N1', anchor=CENTER)
+    tree.heading('n2', text='N2', anchor=CENTER)
+    tree.heading('n3', text='N3', anchor=CENTER)
 
     text = ['Ascending array', 'Random array', 'Descending array']
 
