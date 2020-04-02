@@ -29,8 +29,9 @@ def f(key: str, x: float) -> float:
         return sin(x)
     elif key == 'x ** 2 - 4':
         return x ** 2 - 4
-    elif key == '(x - 1) ** 3 - 2':
-        return (x - 1) ** 3 - 2
+    elif key == 'x ** 3 - 2':
+        # return (x - 1) ** 3 - 2
+        return x ** 3 - 2
 
 
 # Первая производная.
@@ -39,8 +40,9 @@ def d(key: str, x: float) -> float:
         return cos(x)
     elif key == 'x ** 2 - 4':
         return 2 * x
-    elif key == '(x - 1) ** 3 - 2':
-        return 3 * (x - 1) ** 2
+    elif key == 'x ** 3 - 2':
+        # return 3 * (x - 1) ** 2
+        return 3 * x ** 2
 
 
 # Вторя производная.
@@ -49,8 +51,9 @@ def d2(key: str, x: float) -> float:
         return -sin(x)
     elif key == 'x ** 2 - 4':
         return 2
-    elif key == '(x - 1) ** 3 - 2':
-        return 6 * (x - 1)
+    elif key == 'x ** 3 - 2':
+        # return 6 * (x - 1)
+        return 6 * x
 
 
 # Уточнение корней.
@@ -58,7 +61,7 @@ def chord_method(key: str, start: float, ends: float, step: float, eps: float) -
     # Уточнение корня на отрезке
     def refinement(key: str, start: float, end: float, eps: float) -> (float, int):
         iterations = 0
-        if d(key, start) * d2(key, start) < 0:
+        if d(key, start) * d2(key, start) <= 0:
             x = start
             def calculate(x): return x - f(key, x) * \
                 (end - x) / (f(key, end) - f(key, x))
@@ -67,10 +70,27 @@ def chord_method(key: str, start: float, ends: float, step: float, eps: float) -
             def calculate(x): return x - f(key, x) * \
                 (start - x) / (f(key, start) - f(key, x))
 
+        def error(key: str, a: float, b: float, eps: float) -> (float, int):
+            delta_x = eps + 1.0
+            if d2(key, a) * f(key, a) > 0.0:
+                x0 = a
+                x = b
+            else:
+                x0 = b
+                x = a
+            iters = 0
+            while abs(delta_x) > eps:
+                iters += 1
+                delta_x = f(key, x) * (x - x0) / (f(key, x) - f(key, x0))
+                x -= delta_x
+            return x, iters
         x_prev, x = x, calculate(x)
         while abs(x - x_prev) >= eps:
             x_prev, x = x, calculate(x)
             iterations += 1
+            if iterations > 500:
+                x, iterations = error(key, start, end, eps)
+                break
 
         return x, iterations
 
@@ -268,7 +288,7 @@ def create_graph(start: float, interval_end: float, results: list, graph_frame: 
     line2 = ax.scatter(inf_x, inf_y, color='g')
     line3 = ax.scatter(root_x, root_y, color='r')
     ax.legend((line1, line2, line3), ('Function',
-                                      'Root points', 'Inflection points'))
+                                      'Inflection points', 'Root points'))
 
     canvas = FigureCanvasTkAgg(fig, master=graph_frame)
     canvas.draw()
@@ -297,9 +317,9 @@ graph_frame = Frame(window)
 
 tree = create_blank()
 tkvar = StringVar(window)
-choices = {'sin(x)', 'x ** 2 - 4', '(x - 1) ** 3 - 2'}
-tkvar.set('sin(x)')
-key = 'sin(x)'
+choices = {'sin(x)', 'x ** 2 - 4', 'x ** 3 - 2'}
+tkvar.set('x ** 2 - 4')
+key = 'x ** 2 - 4'
 popupMenu = OptionMenu(input_frame, tkvar, *choices)
 popupMenu['width'] = 12
 tkvar.trace('w', change_key)
