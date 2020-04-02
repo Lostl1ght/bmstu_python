@@ -1,48 +1,44 @@
-import time
-from random import randint
-
-
-def gettimeofday() -> None:
-    return round(time.time() * 1000)
-
-
-def insertion_bin(array: list) -> None:
-    def binsearch(array: list, value: int, start: int, end: int) -> int:
-        if start >= end:
-            if array[start] > value:
-                return start
-            else:
-                return start + 1
-
-        mid = (start + end) // 2
-
-        if array[mid] > value:
-            return binsearch(array, value, start, mid - 1)
-        elif array[mid] < value:
-            return binsearch(array, value, mid + 1, end)
-        else:
-            return mid
-
-    for i in range(1, len(array)):
-        pos = binsearch(array, array[i], 0, i - 1)
-        for j in range(i, pos, -1):
-            array[j], array[j - 1] = array[j - 1], array[j]
-
-
-def count(n: int, leng: int) -> float:
-    a = []
-    for i in range(n):
-        a.append(randint(-1000, 1000))
-
-    summ = 0
-    for i in range(leng):
-        print('Try', i + 1)    
-        start = gettimeofday()
-        insertion_bin(a[:])
-        end = gettimeofday()
-        print(end - start)
-        summ += end - start
-
-    return summ / leng
-
-print(count(1000, 10))
+# importing tkinter module 
+from tkinter import * 
+from tkinter.ttk import *
+  
+# creating tkinter window 
+root = Tk() 
+  
+# Progress bar widget 
+progress = Progressbar(root, orient = HORIZONTAL, 
+              length = 100, mode = 'determinate') 
+  
+# Function responsible for the updation 
+# of the progress bar value 
+def bar(): 
+    import time 
+    progress['value'] = 20
+    root.update_idletasks() 
+    time.sleep(1) 
+  
+    progress['value'] = 40
+    root.update_idletasks() 
+    time.sleep(1) 
+  
+    progress['value'] = 50
+    root.update_idletasks() 
+    time.sleep(1) 
+  
+    progress['value'] = 60
+    root.update_idletasks() 
+    time.sleep(1) 
+  
+    progress['value'] = 80
+    root.update_idletasks() 
+    time.sleep(1) 
+    progress['value'] = 100
+  
+progress.pack(pady = 10) 
+  
+# This button will initialize 
+# the progress bar 
+Button(root, text = 'Start', command = bar).pack(pady = 10) 
+  
+# infinite loop 
+mainloop() 
