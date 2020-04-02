@@ -227,16 +227,10 @@ def calculate(operation: bool) -> None:
             minus_because_signs = False
         if sign_a1 is True and sign_a2 is False:
             c, minus_after_operation = subtractor(b1, b2, length)
-            if b1[::-1] >= b2[::-1]:
-                minus_because_signs = True
-            else:
-                minus_because_signs = False
+            minus_because_signs = True
         if sign_a1 is False and sign_a2 is True:
             c, minus_after_operation = subtractor(b1, b2, length)
-            if b1[::-1] >= b2[::-1]:
-                minus_because_signs = False
-            else:
-                minus_because_signs = True
+            minus_because_signs = False
     else:
         if sign_a1 is True and sign_a2 is True:
             c, minus_after_operation = subtractor(b1, b2, length)
