@@ -181,7 +181,7 @@ def bisect(key: str, start: float, ends: float, step: float) -> list:
         def d22(x): return -sin(x)
     elif key == 'x ** 2 - 4':
         def d22(x): return 2
-    elif key == '(x - 1) ** 3 - 2':
+    elif key == 'x ** 3 - 2':
         def d22(x): return 6 * (x - 1)
     end = start + step
     inflation = []
