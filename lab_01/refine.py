@@ -10,7 +10,8 @@ from math import log10, floor, sin, cos
 import scipy.optimize as optimize
 
 
-def do():
+# Выполнение программы.
+def do() -> None:
     start = float(start_entry.get())
     interval_end = float(end_entry.get())
     step = float(step_entry.get())
@@ -22,7 +23,8 @@ def do():
     create_graph(start, interval_end, results, graph_frame)
 
 
-def f(key, x):
+# Функция.
+def f(key: str, x: float) -> float:
     if key == 'sin(x)':
         return sin(x)
     elif key == 'x ** 2 - 4':
@@ -30,7 +32,9 @@ def f(key, x):
     elif key == '(x - 1) ** 3 - 2':
         return (x - 1) ** 3 - 2
 
-def d(key, x):
+
+# Первая производная.
+def d(key: str, x: float) -> float:
     if key == 'sin(x)':
         return cos(x)
     elif key == 'x ** 2 - 4':
@@ -38,7 +42,9 @@ def d(key, x):
     elif key == '(x - 1) ** 3 - 2':
         return 3 * (x - 1) ** 2
 
-def d2(key, x):
+
+# Вторя производная.
+def d2(key: str, x: float) -> float:
     if key == 'sin(x)':
         return -sin(x)
     elif key == 'x ** 2 - 4':
@@ -47,16 +53,19 @@ def d2(key, x):
         return 6 * (x - 1)
 
 
-def chord_method(key, start, ends, step, eps):
-
-    def refinement(key, start, end, eps):
+# Уточнение корней.
+def chord_method(key: str, start: float, ends: float, step: float, eps: float) -> list:
+    # Уточнение корня на отрезке
+    def refinement(key: str, start: float, end: float, eps: float) -> (float, int):
         iterations = 0
         if d(key, start) * d2(key, start) < 0:
             x = start
-            def calculate(x): return x - f(key, x) * (end - x) / (f(key, end) - f(key, x))
+            def calculate(x): return x - f(key, x) * \
+                (end - x) / (f(key, end) - f(key, x))
         else:
             x = end
-            def calculate(x): return x - f(key, x) * (start - x) / (f(key, start) - f(key, x))
+            def calculate(x): return x - f(key, x) * \
+                (start - x) / (f(key, start) - f(key, x))
 
         x_prev, x = x, calculate(x)
         while abs(x - x_prev) >= eps:
@@ -65,7 +74,8 @@ def chord_method(key, start, ends, step, eps):
 
         return x, iterations
 
-    def pack(roots, eps):
+    # Упаковка результатов уточнения.
+    def pack(roots: list, eps: float) -> None:
         r = str(abs(int(floor(log10(eps)))))
         form = '{:.' + str(r) + 'f}'
 
@@ -97,10 +107,17 @@ def chord_method(key, start, ends, step, eps):
                 max_len_end = len(str(i['end']))
 
         for i in range(len(roots)):
-            roots[i]['root'] = ' ' * (max_len_root - len(roots[i]['root'])) + roots[i]['root']
-            roots[i]['iterations'] = ' ' * (max_len_it - len(str(roots[i]['iterations']))) + str(roots[i]['iterations'])
-            roots[i]['start'] = ' ' * (max_len_start - len(str(roots[i]['start']))) + str(roots[i]['start'])
-            roots[i]['end'] = ' ' * (max_len_end - len(str(roots[i]['end']))) + str(roots[i]['end'])
+            roots[i]['root'] = ' ' * \
+                (max_len_root - len(roots[i]['root'])) + roots[i]['root']
+            roots[i]['iterations'] = ' ' * \
+                (max_len_it -
+                 len(str(roots[i]['iterations']))) + str(roots[i]['iterations'])
+            roots[i]['start'] = ' ' * \
+                (max_len_start -
+                 len(str(roots[i]['start']))) + str(roots[i]['start'])
+            roots[i]['end'] = ' ' * \
+                (max_len_end -
+                 len(str(roots[i]['end']))) + str(roots[i]['end'])
 
     roots = []
 
@@ -138,7 +155,8 @@ def chord_method(key, start, ends, step, eps):
     return roots
 
 
-def bisect(key, start, ends, step):
+# Нахождение точек перегиба.
+def bisect(key: str, start: float, ends: float, step: float) -> list:
     if key == 'sin(x)':
         def d22(x): return -sin(x)
     elif key == 'x ** 2 - 4':
@@ -166,16 +184,19 @@ def bisect(key, start, ends, step):
     return inflation
 
 
-def create_table(results, tree):
+# Заполнение таблицы.
+def create_table(results: list, tree: 'Treeview') -> None:
     tree.delete(*tree.get_children())
 
     for line, n in zip(results, range(len(results))):
-        tree.insert('', n, values=(str(n + 1), results[n]['start'], results[n]['end'], results[n]['root'], results[n]['iterations']))
+        tree.insert('', n, values=(str(
+            n + 1), results[n]['start'], results[n]['end'], results[n]['root'], results[n]['iterations']))
 
     tree.pack()
 
 
-def create_blank():
+# Инициальзация таблицы и графика.
+def create_blank() -> 'Treeview':
     fig = plt.Figure(figsize=(8, 4), dpi=100)
     ax = fig.add_subplot(111)
     ax.plot()
@@ -188,7 +209,8 @@ def create_blank():
     toolbar = NavigationToolbar2Tk(canvas, graph_frame)
     toolbar.update()
 
-    tree = Treeview(table_frame, columns=('num', 'start', 'end', 'root', 'itrs'), height=15)
+    tree = Treeview(table_frame, columns=(
+        'num', 'start', 'end', 'root', 'itrs'), height=15)
 
     tree.column('#0', width=0, minwidth=0)
     tree.column('num', width=160, minwidth=160, anchor=CENTER)
@@ -208,7 +230,8 @@ def create_blank():
     return tree
 
 
-def create_graph(start, interval_end, results, graph_frame):
+# Рисование графика.
+def create_graph(start: float, interval_end: float, results: list, graph_frame: 'Frame') -> None:
     graph_frame.pack_forget()
     graph_frame = Frame(window)
     graph_frame.grid(row=1, column=1)
@@ -222,7 +245,7 @@ def create_graph(start, interval_end, results, graph_frame):
     root_y = []
     for dic in results:
         root_x.append(float(dic['root']))
-        root_y.append(0)           
+        root_y.append(0)
 
     inf_x = np.array(bisect(key, start, interval_end, 0.1))
     inf_y = []
@@ -242,9 +265,10 @@ def create_graph(start, interval_end, results, graph_frame):
     ax.hlines(0, start, interval_end, colors='black')
     ax.vlines(0, min(y), max(y), colors='black')
     line1 = mlines.Line2D([], [], color='blue')
-    line2 = ax.scatter(inf_x, inf_y, color='g')                                      
+    line2 = ax.scatter(inf_x, inf_y, color='g')
     line3 = ax.scatter(root_x, root_y, color='r')
-    ax.legend((line1, line2, line3), ('Function', 'Root points', 'Inflection points'))
+    ax.legend((line1, line2, line3), ('Function',
+                                      'Root points', 'Inflection points'))
 
     canvas = FigureCanvasTkAgg(fig, master=graph_frame)
     canvas.draw()
@@ -253,7 +277,9 @@ def create_graph(start, interval_end, results, graph_frame):
     toolbar = NavigationToolbar2Tk(canvas, graph_frame)
     toolbar.update()
 
-def change_key(*args):
+
+# Изменение функции.
+def change_key(*args) -> None:
     global key, start_entry, end_entry, step_entry
     key = tkvar.get()
     start_entry.delete(0, END)
@@ -296,13 +322,13 @@ input_frame.grid(row=0, column=0)
 table_frame.grid(row=0, column=1)
 graph_frame.grid(row=1, column=1)
 
-func_label.grid(row = 0)
+func_label.grid(row=0)
 start_label.grid(row=2)
 end_label.grid(row=4)
 step_label.grid(row=6)
 eps_label.grid(row=8)
 
-popupMenu.grid(row = 1, columnspan=4)
+popupMenu.grid(row=1, columnspan=4)
 start_entry.grid(row=3)
 end_entry.grid(row=5)
 step_entry.grid(row=7)

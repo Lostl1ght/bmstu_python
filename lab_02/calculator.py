@@ -9,6 +9,7 @@
 from tkinter import END, Toplevel, Label, Button, Tk, Entry, CENTER, Menu
 
 
+# Преобразует число в пригодный для вычислений вид.
 def converter(a1: str, a2: str) -> (str, str, int, int):
     c1 = ''
     for i in a1:
@@ -57,6 +58,7 @@ def converter(a1: str, a2: str) -> (str, str, int, int):
     return bb1, bb2, length, dot_len
 
 
+# Преобразует число в пригодный для восприятия вид.
 def normalizer(c: str, dot_len: int, minus_after_operation: bool, minus_because_signs: bool) -> str:
     k = 0
     if dot_len > 0:
@@ -79,6 +81,7 @@ def normalizer(c: str, dot_len: int, minus_after_operation: bool, minus_because_
     return '-' + c[i:len(c) - k]
 
 
+# Выполняет сложение столбиком.
 def adder(b1: str, b2: str, length: int) -> (str, bool):
     c = ''
     flag = False
@@ -109,6 +112,7 @@ def adder(b1: str, b2: str, length: int) -> (str, bool):
     return c, True
 
 
+# Выполняет вычитаение столбиком.
 def subtractor(b1: str, b2: str, length: int) -> (str, bool):
     minus = True
     if b1[::-1] < b2[::-1]:
@@ -154,6 +158,7 @@ def subtractor(b1: str, b2: str, length: int) -> (str, bool):
 operation = True
 
 
+# Выбор операции.
 def choose(b: bool) -> None:
     global operation
     operation = b
@@ -163,6 +168,7 @@ def choose(b: bool) -> None:
         fu_label['text'] = '-'
 
 
+# Защита от дурака.
 def check(a1: str, a2: str) -> bool:
     error = False
     if a1 == '' or a2 == '':
@@ -193,6 +199,7 @@ def check(a1: str, a2: str) -> bool:
         return False
 
 
+# Проверка знака числа.
 def signum(a1: str, a2: str) -> (bool, bool):
     sign_a1 = True
     sign_a2 = True
@@ -205,6 +212,7 @@ def signum(a1: str, a2: str) -> (bool, bool):
     return sign_a1, sign_a2
 
 
+# Вычисление.
 def calculate(operation: bool) -> None:
     if check(a_entry[0].get(), a_entry[1].get()):
         return
@@ -250,17 +258,20 @@ def calculate(operation: bool) -> None:
     res_label['text'] = result
 
 
+# Очистка всех полей.
 def delete_all() -> None:
     a_entry[0].delete(0, END)
     a_entry[1].delete(0, END)
     res_label.config(text='')
 
 
+# Очистка одного поля.
 def delete_one(opt: int) -> None:
     a_entry[opt].delete(0, END)
     res_label.config(text='')
 
 
+# Информация.
 def show_about() -> None:
     win = Toplevel(window, width=410, height=200)
     win.title('Информация о программе и её владельце')
@@ -274,10 +285,12 @@ def show_about() -> None:
 which = 0
 
 
+# Запись числа.
 def insert_digit(s: str) -> None:
     a_entry[which].insert(END, s)
 
 
+# Передвижение курсора.
 def set_focus(i: int) -> None:
     global which
     a_entry[i].focus_set()
@@ -285,16 +298,18 @@ def set_focus(i: int) -> None:
     which = i
 
 
+# Определение фокуса.
 def focus1(event: 'tkinter.Event') -> None:
     global which
     which = 0
 
-
+# Определение фокуса.
 def focus2(event: 'tkinter.Event') -> None:
     global which
     which = 1
 
 
+# Изменение знака числа.
 def invert(opt: int) -> None:
     num = a_entry[opt].get()
     if num == '':
@@ -361,14 +376,14 @@ btn_clear.place(x=190, y=270, width=50, height=50)
 
 main_menu = Menu()
 
-del_menu = Menu()
+del_menu = Menu(tearoff=0)
 del_menu.add_command(label='Очистить первое поле ввода     ',
                      command=lambda: delete_one(0))
 del_menu.add_command(label='Очистить второе поле ввода     ',
                      command=lambda: delete_one(1))
 del_menu.add_command(label='Очистить все поля     ', command=delete_all)
 
-calc_menu = Menu()
+calc_menu = Menu(tearoff=0)
 calc_menu.add_command(label='Сложить числа     ',
                       command=lambda: calculate(True))
 calc_menu.add_command(label='Вычесть числа     ',
@@ -378,7 +393,7 @@ calc_menu.add_command(
 calc_menu.add_command(
     label='Изменить знак второго числа     ', command=lambda: invert(1))
 
-inf_menu = Menu()
+inf_menu = Menu(tearoff=0)
 inf_menu.add_command(
     label='Информация о программе и её владельце     ', command=show_about)
 
