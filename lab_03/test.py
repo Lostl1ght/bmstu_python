@@ -21,9 +21,6 @@ def bar():
     root.update_idletasks() 
     time.sleep(1) 
   
-
-
-  
     progress['value'] = 50
     root.update_idletasks() 
     time.sleep(1) 
