@@ -12,6 +12,8 @@ progress = Progressbar(root, orient = HORIZONTAL,
 # Function responsible for the updation 
 # of the progress bar value 
 def bar(): 
+
+    
     import time 
     progress['value'] = 20
     root.update_idletasks() 
