@@ -94,13 +94,16 @@ def create_blank() -> 'Treeview':
 def create_graph(graph_frame: 'Frame') -> None:
     try:
         gerr_label['text'] = ''
-        graph_frame.pack_forget()
+        graph_frame.forget()
         graph_frame = Frame(window)
         graph_frame.grid(row=2, column=1)
 
         x = []
         n = int(n_entry.get())
         step = int(step_entry.get())
+        if n <= 0 or step <= 0:
+            gerr_label['text'] = 'ERROR'
+            return
         status = 0
         for i in range(10):
             x.append(n)
@@ -205,6 +208,10 @@ def calculate_for_table(meas: int, n: list) -> None:
     try:
         n = [int(i) for i in n]
         terr_label['text'] = ''
+        for i in n:
+            if i <= 0:
+                terr_label['text'] = 'ERROR'
+                return
         table_progress['value'] = 5
         window.update()
         status = 0
