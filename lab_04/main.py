@@ -1,27 +1,27 @@
-import matplotlib.pyplot as plt
-
-plt.axes()
-
-def kek():
-
-    line = plt.Line2D((10, 5), (10, 0), lw=2.5)
-    plt.gca().add_line(line)
-    line = plt.Line2D((5, 0), (0, 0), lw=2.5)
-    plt.gca().add_line(line)
-    line = plt.Line2D((0, 10), (0, 10), lw=2.5)
-    plt.gca().add_line(line)
-
-def kek2():
-
-    line = plt.Line2D((-10, -5), (-10, 0), lw=2.5)
-    plt.gca().add_line(line)
-    line = plt.Line2D((-5, 0), (0, 0), lw=2.5)
-    plt.gca().add_line(line)
-    line = plt.Line2D((0, -10), (0, -10), lw=2.5)
-    plt.gca().add_line(line)
-
-kek()
+from tkinter import *
 
 
-plt.axis('scaled')
-plt.show()
+def get_point(event, canv):
+    canv.create_oval(event.x, event.y, event.x + 3,
+                     event.y + 3, width=0, fill='white')
+    print(event.x, event.y)
+
+
+def main() -> None:
+    window = Tk()
+    window.resizable(0, 0)
+
+    canv_frame = Frame(window, height=400, width=400)
+    input_frame = Frame(window, height=400, width=100)
+    input_frame.grid(row=0, column=0)
+    canv_frame.grid(row=0, column=1)
+
+    canv = Canvas(canv_frame, height=400, width=400, bg='green')
+    canv.grid()
+    canv.bind('<Button-1>', lambda event: get_point(event, canv))
+
+    window.mainloop()
+
+
+if __name__ == '__main__':
+    main()
