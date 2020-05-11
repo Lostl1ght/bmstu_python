@@ -1,11 +1,13 @@
-def draw_mouse(event, mode, canv, dots, tris, dots_tri):
+def draw_mouse(error_lbl, event, mode, canv, dots, tris, dots_tri):
+    error_lbl['text'] = ''
     if mode[0] == 'dot':
         draw_point_mouse(event, canv, dots)
     if mode[0] == 'tri':
         draw_tri_mouse(event, canv, tris, dots_tri)
 
 
-def delete(mode, canv, dots, tris, dots_tri):
+def delete(error_lbl, mode, canv, dots, tris, dots_tri):
+    error_lbl['text'] = ''
     if mode[0] == 'dot':
         if len(dots) - 1 < 0:
             return
@@ -13,7 +15,7 @@ def delete(mode, canv, dots, tris, dots_tri):
         dots.pop(len(dots) - 1)
     if mode[0] == 'tri':
         if len(dots_tri) > 0:
-            canv.delete(dots_tri[len(dots_tri) - 1][0])
+            canv.delete(dots_tri[len(dots_tri) - 1]['dot'])
             dots_tri.pop(len(dots_tri) - 1)
         elif len(tris) > 0:
             canv.delete(tris[len(tris) - 1]['tri'])
@@ -30,28 +32,74 @@ def draw_point_mouse(event, canv, dots):
 def draw_tri_mouse(event, canv, tris, dots_tri):
     dot = canv.create_oval(event.x, event.y, event.x + 3,
                            event.y + 3, width=0, fill='white')
-    dots_tri.append(list((dot, event.x, event.y)))
+    dots_tri.append(dict(dot=dot, x=event.x, y=event.y))
+    print(dots_tri)
     if len(dots_tri) % 3 == 0:
         i = len(dots_tri) - 1
-        tpl = (dots_tri[i][1], dots_tri[i][2], dots_tri[i - 1][1], dots_tri[i - 1]
-               [2], dots_tri[i - 2][1], dots_tri[i - 2][2], dots_tri[i][1], dots_tri[i][2])
+        tpl = (dots_tri[i]['x'], dots_tri[i]['y'], dots_tri[i - 1]['x'], dots_tri[i - 1]
+               ['y'], dots_tri[i - 2]['x'], dots_tri[i - 2]['y'], dots_tri[i]['x'], dots_tri[i]['y'])
         triangle = canv.create_line(tpl, fill='white')
-        dot0 = dict(x=dots_tri[0][1], y=dots_tri[0][2])
-        dot1 = dict(x=dots_tri[1][1], y=dots_tri[1][2])
-        dot2 = dict(x=dots_tri[2][1], y=dots_tri[2][2])
         tris.append(
-            dict(tri=triangle, dot0=dot0, dot1=dot1, dot2=dot2))
+            dict(tri=triangle, dot0=dots_tri[i], dot1=dots_tri[i - 1], dot2=dots_tri[i - 2]))
         print(tris)
         for l in range(3):
-            canv.delete(dots_tri[i][0])
-            dots_tri.pop(i)
+            canv.delete(dots_tri[i]['dot'])
             i -= 1
 
 
-def switch_mode(mode, lbl):
+def switch_mode(mode, mode_lbl):
     if mode[0] == 'dot':
         mode[0] = 'tri'
-        lbl['text'] = 'Triangles mode'
+        mode_lbl['text'] = 'Triangles mode'
     else:
         mode[0] = 'dot'
-        lbl['text'] = 'Dots mode'
+        mode_lbl['text'] = 'Dots mode'
+
+
+def draw_key(error_lbl, x_entry, y_entry, mode, canv, dots, tris, dots_tri):
+    if key_check(error_lbl, x_entry, y_entry):
+        return
+    if mode[0] == 'dot':
+        draw_point_key(x_entry, y_entry, canv, dots)
+    if mode[0] == 'tri':
+        draw_tri_key(x_entry, y_entry, canv, tris, dots_tri)
+
+
+def draw_point_key(x_entry, y_entry, canv, dots):
+    dot = canv.create_oval(int(x_entry.get()), int(y_entry.get()), int(x_entry.get()) + 3,
+                           int(y_entry.get()) + 3, width=0, fill='white')
+    dots.append(dict(dot=dot, x=int(x_entry.get()), y=int(y_entry.get())))
+    print(dots)
+
+
+def draw_tri_key(x_entry, y_entry, canv, tris, dots_tri):
+    dot = canv.create_oval(int(x_entry.get()), int(y_entry.get()), int(x_entry.get()) + 3,
+                           int(y_entry.get()) + 3, width=0, fill='white')
+    dots_tri.append(dict(dot=dot, x=int(x_entry.get()), y=int(y_entry.get())))
+    if len(dots_tri) % 3 == 0:
+        i = len(dots_tri) - 1
+        tpl = (dots_tri[i]['x'], dots_tri[i]['y'], dots_tri[i - 1]['x'], dots_tri[i - 1]
+               ['y'], dots_tri[i - 2]['x'], dots_tri[i - 2]['y'], dots_tri[i]['x'], dots_tri[i]['y'])
+        triangle = canv.create_line(tpl, fill='white')
+        tris.append(
+            dict(tri=triangle, dot0=dots_tri[i], dot1=dots_tri[i - 1], dot2=dots_tri[i - 2]))
+        print(tris)
+        for l in range(3):
+            canv.delete(dots_tri[i]['dot'])
+            i -= 1
+
+
+def key_check(error_lbl, x_entry, y_entry):
+    try:
+        x_int = int(x_entry.get())
+        y_int = int(y_entry.get())
+        x_float = float(x_entry.get())
+        y_float = float(y_entry.get())
+        if x_int < x_float or y_int < y_float:
+            error_lbl['text'] = 'ERROR'
+            return True
+        error_lbl['text'] = ''
+        return False
+    except:
+        error_lbl['text'] = 'ERROR'
+        return True
