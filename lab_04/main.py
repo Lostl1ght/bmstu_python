@@ -1,22 +1,28 @@
 from tkinter import *
 from cnvs import *
 
+
 def main():
     window = Tk()
     window.resizable(0, 0)
+    window.title('Dots and triangles')
 
     canv_frame = Frame(window, height=400, width=400)
     input_frame = Frame(window, height=400, width=100)
     input_frame.grid(row=0, column=0)
     canv_frame.grid(row=0, column=1)
 
+    mode = 'tri'
+
     canv = Canvas(canv_frame, height=400, width=400, bg='green')
     canv.grid()
-    canv.bind('<Button-1>', lambda event: get_point(event, canv, dots))
-    canv.bind('<Button-3>', lambda event: delete(event, canv, dots))
+    canv.bind('<Button-1>', lambda event: draw(event,
+                                               mode, canv, dots, tris, dots_tri))
+    canv.bind('<Button-3>', lambda event: delete(event,
+                                                 mode, canv, dots, tris, dots_tri))
 
-    lbl = Label(input_frame, text='Finish input', bg='white')
-    lbl.place(x=50, y=25, anchor=CENTER, width=75)
+    lbl = Label(input_frame, text='Triangles mode', bg='white')
+    lbl.place(x=50, y=25, anchor=CENTER, width=85)
 
     x_entry = Entry(input_frame)
     x_entry.place(x=50, y=75, anchor=CENTER, width=75)
@@ -42,4 +48,6 @@ def main():
 
 if __name__ == '__main__':
     dots = []
+    tris = []
+    dots_tri = []
     main()
