@@ -1,17 +1,5 @@
 from tkinter import *
-
-
-def get_point(event, canv):
-    dot = canv.create_oval(event.x, event.y, event.x + 3,
-                     event.y + 3, width=0, fill='white')
-    dots.append(dict(dot=dot, x=event.x, y=event.y))
-
-def delete(event, canv):
-    if len(dots) - 1 < 0:
-        return
-    canv.delete(dots[len(dots) - 1]['dot'])
-    dots.pop(len(dots) - 1)
-
+from cnvs import *
 
 def main():
     window = Tk()
@@ -24,8 +12,8 @@ def main():
 
     canv = Canvas(canv_frame, height=400, width=400, bg='green')
     canv.grid()
-    canv.bind('<Button-1>', lambda event: get_point(event, canv))
-    canv.bind('<Button-3>', lambda event: delete(event, canv))
+    canv.bind('<Button-1>', lambda event: get_point(event, canv, dots))
+    canv.bind('<Button-3>', lambda event: delete(event, canv, dots))
 
     lbl = Label(input_frame, text='Finish input', bg='white')
     lbl.place(x=50, y=25, anchor=CENTER, width=75)
@@ -43,8 +31,11 @@ def main():
     mode_btn = Button(input_frame, text='Switch mode')
     mode_btn.place(x=50, y=225, anchor=CENTER, width=80)
 
+    mode_btn = Button(input_frame, text='Compute')
+    mode_btn.place(x=50, y=275, anchor=CENTER, width=80)
+
     del_btn = Button(input_frame, text='Delete last')
-    del_btn.place(x=50, y=275, anchor=CENTER, width=80)
+    del_btn.place(x=50, y=325, anchor=CENTER, width=80)
 
     window.mainloop()
 
