@@ -16,8 +16,8 @@ def main():
 
     canv = Canvas(canv_frame, height=400, width=400, bg='green')
     canv.grid()
-    canv.bind('<Button-1>', lambda event: draw(event,
-                                               mode, canv, dots, tris, dots_tri))
+    canv.bind('<Button-1>', lambda event: draw_mouse(event,
+                                                     mode, canv, dots, tris, dots_tri))
     canv.bind('<Button-3>', lambda event: delete(event,
                                                  mode, canv, dots, tris, dots_tri))
 
