@@ -1,4 +1,4 @@
-from tkinter import *
+from tkinter import Tk, Frame, Canvas, Label, Entry, Button, CENTER
 from cnvs import *
 
 
@@ -38,7 +38,7 @@ def main():
     y_entry.place(x=50, y=150, anchor=CENTER, width=75)
 
     inpt_btn = Button(input_frame, text='Input', command=lambda: draw_key(
-        error_lbl, x_entry, y_entry, mode, canv, dots, tris, dots_tri))
+        error_lbl, x_entry, y_entry, mode, canv, dots, tris, dots_tri, maximum))
     inpt_btn.place(x=50, y=175, anchor=CENTER, width=50)
 
     mode_btn = Button(input_frame, text='Switch mode',
@@ -48,8 +48,8 @@ def main():
     comp_btn = Button(input_frame, text='Compute')
     comp_btn.place(x=50, y=275, anchor=CENTER, width=80)
 
-    del_btn = Button(input_frame, text='Delete last',
-                     command=lambda: delete(error_lbl, mode, canv, dots, tris, dots_tri))
+    del_btn = Button(input_frame, text='Delete last', command=lambda: delete(
+        error_lbl, mode, canv, dots, tris, dots_tri))
     del_btn.place(x=50, y=325, anchor=CENTER, width=80)
 
     window.mainloop()
@@ -59,4 +59,5 @@ if __name__ == '__main__':
     dots = []
     tris = []
     dots_tri = []
+    maximum = 400
     main()
