@@ -3,7 +3,7 @@ from cnvs import *
 from mth import *
 
 
-def main(size):
+def main():
     minimum = 400
     if size < minimum:
         print('Fuck you!')
@@ -71,4 +71,4 @@ if __name__ == '__main__':
     dots_tri = []
     size = 400  # Not less than 400.
     lines = []
-    main(size)
+    main()
