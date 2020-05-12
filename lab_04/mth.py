@@ -1,4 +1,5 @@
-from cnvs import clear_lines
+from cnvs import clear_lines, draw_lines
+
 
 def compute(dots, tris, lines, canv, size):
     clear_lines(canv, lines)
@@ -7,17 +8,6 @@ def compute(dots, tris, lines, canv, size):
     ks_bs = all_maxs(dots, tris, max_count)
     print(ks_bs)
     draw_lines(canv, ks_bs, size, lines)
-
-
-def draw_lines(canv, ks_bs, size, lines):
-    for i in range(len(ks_bs)):
-        x1 = -10
-        y1 = ks_bs[i]['k'] * x1 + ks_bs[i]['b']
-        x2 = size + 10
-        y2 = ks_bs[i]['k'] * x2 + ks_bs[i]['b']
-
-        line = canv.create_line(x1, y1, x2, y2, width=0, fill='white')
-        lines.append(dict(line=line, k=ks_bs[i]['k'], b=ks_bs[i]['b']))
 
 
 def all_maxs(dots, tris, max_count):

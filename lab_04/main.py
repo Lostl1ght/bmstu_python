@@ -24,7 +24,7 @@ def main(size):
     canv.bind('<Button-1>', lambda event: draw_mouse(error_lbl,
                                                      event, mode, canv, dots, tris, dots_tri, lines))
     canv.bind('<Button-3>', lambda event: delete(error_lbl,
-                                                 mode, canv, dots, tris, dots_tri))
+                                                 mode, canv, dots, tris, dots_tri, lines))
 
     mode_lbl = Label(input_frame, text='Triangles mode')
     mode_lbl.place(x=50, y=25, anchor=CENTER, width=85)
@@ -55,7 +55,7 @@ def main(size):
     comp_btn.place(x=50, y=250, anchor=CENTER, width=80)
 
     del_btn = Button(input_frame, text='Delete last', command=lambda: delete(
-        error_lbl, mode, canv, dots, tris, dots_tri))
+        error_lbl, mode, canv, dots, tris, dots_tri, lines))
     del_btn.place(x=50, y=300, anchor=CENTER, width=80)
 
     clear_btn = Button(input_frame, text='Clear', command=lambda: clear(

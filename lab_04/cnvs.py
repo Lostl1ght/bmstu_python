@@ -29,7 +29,8 @@ def draw_key(error_lbl, x_entry, y_entry, mode, canv, dots, tris, dots_tri, size
         draw_tri(x, y, canv, tris, dots_tri)
 
 
-def delete(error_lbl, mode, canv, dots, tris, dots_tri):
+def delete(error_lbl, mode, canv, dots, tris, dots_tri, lines):
+    clear_lines(canv, lines)
     error_lbl['text'] = ''
     if mode[0] == 'dot':
         if len(dots) - 1 < 0:
@@ -58,8 +59,8 @@ def draw_tri(x, y, canv, tris, dots_tri):
     print(dots_tri)
     if len(dots_tri) % 3 == 0:
         i = len(dots_tri) - 1
-        tpl = (dots_tri[i]['x'], dots_tri[i]['y'], dots_tri[i - 1]['x'], dots_tri[i - 1]
-               ['y'], dots_tri[i - 2]['x'], dots_tri[i - 2]['y'], dots_tri[i]['x'], dots_tri[i]['y'])
+        tpl = (dots_tri[i]['x'], dots_tri[i]['y'], dots_tri[i - 1]['x'], dots_tri[i - 1]['y'],
+               dots_tri[i - 2]['x'], dots_tri[i - 2]['y'], dots_tri[i]['x'], dots_tri[i]['y'])
         triangle = canv.create_line(tpl, fill='white')
         tris.append(
             dict(tri=triangle, dot0=dots_tri[i], dot1=dots_tri[i - 1], dot2=dots_tri[i - 2]))
@@ -130,3 +131,14 @@ def clear_lines(canv, lines):
     for i in range(len(lines)):
         canv.delete(lines[i]['line'])
     lines.clear()
+
+
+def draw_lines(canv, ks_bs, size, lines):
+    for i in range(len(ks_bs)):
+        x1 = -10
+        y1 = ks_bs[i]['k'] * x1 + ks_bs[i]['b']
+        x2 = size + 10
+        y2 = ks_bs[i]['k'] * x2 + ks_bs[i]['b']
+
+        line = canv.create_line(x1, y1, x2, y2, width=0, fill='white')
+        lines.append(dict(line=line, k=ks_bs[i]['k'], b=ks_bs[i]['b']))
