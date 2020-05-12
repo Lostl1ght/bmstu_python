@@ -107,3 +107,18 @@ def same_check(error_lbl, x, y, points):
 
     error_lbl['text'] = ''
     return False
+
+
+def clear(canv, dots, tris, dots_tri, lines):
+    for i in range(len(dots)):
+        canv.delete(dots[i]['dot'])
+    dots.clear()
+    for i in range(len(dots_tri)):
+        canv.delete(dots_tri[i]['dot'])
+    dots_tri.clear()
+    for i in range(len(tris)):
+        canv.delete(tris[i]['tri'])
+    tris.clear()
+    for i in range(len(lines)):
+        canv.delete(lines[i]['line'])
+    lines.clear()

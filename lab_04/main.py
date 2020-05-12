@@ -46,11 +46,15 @@ def main():
     mode_btn.place(x=50, y=225, anchor=CENTER, width=80)
 
     comp_btn = Button(input_frame, text='Compute')
-    comp_btn.place(x=50, y=275, anchor=CENTER, width=80)
+    comp_btn.place(x=50, y=250, anchor=CENTER, width=80)
 
     del_btn = Button(input_frame, text='Delete last', command=lambda: delete(
         error_lbl, mode, canv, dots, tris, dots_tri))
-    del_btn.place(x=50, y=325, anchor=CENTER, width=80)
+    del_btn.place(x=50, y=300, anchor=CENTER, width=80)
+
+    clear_btn = Button(input_frame, text='Clear', command=lambda: clear(
+        canv, dots, tris, dots_tri, lines))
+    clear_btn.place(x=50, y=325, anchor=CENTER, width=80)
 
     window.mainloop()
 
@@ -60,4 +64,5 @@ if __name__ == '__main__':
     tris = []
     dots_tri = []
     maximum = 400
+    lines = []
     main()
