@@ -1,25 +1,24 @@
 from tkinter import Tk, Frame, Canvas, Label, Entry, Button, CENTER
 from cnvs import *
-from mth import *
 
 
-def main(maximum):
+def main(size):
     minimum = 400
-    if maximum < minimum:
+    if size < minimum:
         print('Fuck you!')
         return
     window = Tk()
     window.resizable(0, 0)
     window.title('Dots and triangles')
 
-    canv_frame = Frame(window, height=maximum, width=maximum)
-    input_frame = Frame(window, height=maximum, width=100)
+    canv_frame = Frame(window, height=size, width=size)
+    input_frame = Frame(window, height=size, width=100)
     input_frame.grid(row=0, column=0)
     canv_frame.grid(row=0, column=1)
 
     mode = ['tri']
 
-    canv = Canvas(canv_frame, height=maximum, width=maximum, bg='green')
+    canv = Canvas(canv_frame, height=size, width=size, bg='green')
     canv.grid()
     canv.bind('<Button-1>', lambda event: draw_mouse(error_lbl,
                                                      event, mode, canv, dots, tris, dots_tri))
@@ -43,7 +42,7 @@ def main(maximum):
     y_entry.place(x=50, y=150, anchor=CENTER, width=75)
 
     inpt_btn = Button(input_frame, text='Input', command=lambda: draw_key(
-        error_lbl, x_entry, y_entry, mode, canv, dots, tris, dots_tri, maximum))
+        error_lbl, x_entry, y_entry, mode, canv, dots, tris, dots_tri, size))
     inpt_btn.place(x=50, y=175, anchor=CENTER, width=50)
 
     mode_btn = Button(input_frame, text='Switch mode',
@@ -68,6 +67,6 @@ if __name__ == '__main__':
     dots = []
     tris = []
     dots_tri = []
-    maximum = 400  # Not less than 400.
+    size = 400  # Not less than 400.
     lines = []
-    main(maximum)
+    main(size)

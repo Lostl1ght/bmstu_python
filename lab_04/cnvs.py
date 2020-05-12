@@ -12,8 +12,8 @@ def draw_mouse(error_lbl, event, mode, canv, dots, tris, dots_tri):
         draw_tri(x, y, canv, tris, dots_tri)
 
 
-def draw_key(error_lbl, x_entry, y_entry, mode, canv, dots, tris, dots_tri, maximum):
-    if key_check(error_lbl, x_entry, y_entry, maximum):
+def draw_key(error_lbl, x_entry, y_entry, mode, canv, dots, tris, dots_tri, size):
+    if key_check(error_lbl, x_entry, y_entry, size):
         return
     x = int(x_entry.get())
     y = int(y_entry.get())
@@ -77,7 +77,7 @@ def switch_mode(mode, mode_lbl):
         mode_lbl['text'] = 'Dots mode'
 
 
-def key_check(error_lbl, x_entry, y_entry, maximum):
+def key_check(error_lbl, x_entry, y_entry, size):
     try:
         x_int = int(x_entry.get())
         y_int = int(y_entry.get())
@@ -89,7 +89,7 @@ def key_check(error_lbl, x_entry, y_entry, maximum):
         if x_int < 0 or y_int < 0:
             error_lbl['text'] = 'ERROR'
             return True
-        if x_int > maximum or y_int > maximum:
+        if x_int > size or y_int > size:
             error_lbl['text'] = 'ERROR'
             return True
         error_lbl['text'] = ''
