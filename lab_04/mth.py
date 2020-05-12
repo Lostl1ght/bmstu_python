@@ -1,23 +1,39 @@
+from cnvs import clear_lines
+
 def compute(dots, tris, lines, canv, size):
+    clear_lines(canv, lines)
     max_count = find_max(dots, tris)
     print('max_count =', max_count)
     ks_bs = all_maxs(dots, tris, max_count)
     print(ks_bs)
+    draw_lines(canv, ks_bs, size, lines)
+
+
+def draw_lines(canv, ks_bs, size, lines):
+    for i in range(len(ks_bs)):
+        x1 = -10
+        y1 = ks_bs[i]['k'] * x1 + ks_bs[i]['b']
+        x2 = size + 10
+        y2 = ks_bs[i]['k'] * x2 + ks_bs[i]['b']
+
+        line = canv.create_line(x1, y1, x2, y2, width=0, fill='white')
+        lines.append(dict(line=line, k=ks_bs[i]['k'], b=ks_bs[i]['b']))
 
 
 def all_maxs(dots, tris, max_count):
     ks_bs = []
-    for i in range(len(dots)):
-        for j in range(i + 1, len(dots)):
-            if dots[i]['x'] - dots[j]['x'] == 0:
-                count = find_if_0(dots[i]['x'], tris)
-            else:
-                k = (dots[i]['y'] - dots[j]['y']) / \
-                    (dots[i]['x'] - dots[j]['x'])
-                b = dots[i]['y'] - k * dots[i]['x']
-                count = find(k, b, tris)
-            if count == max_count:
-                ks_bs.append(dict(k=k, b=b))
+    if max_count > 0:
+        for i in range(len(dots)):
+            for j in range(i + 1, len(dots)):
+                if dots[i]['x'] - dots[j]['x'] == 0:
+                    count = find_if_0(dots[i]['x'], tris)
+                else:
+                    k = (dots[i]['y'] - dots[j]['y']) / \
+                        (dots[i]['x'] - dots[j]['x'])
+                    b = dots[i]['y'] - k * dots[i]['x']
+                    count = find(k, b, tris)
+                if count == max_count:
+                    ks_bs.append(dict(k=k, b=b))
     return ks_bs
 
 
@@ -117,18 +133,3 @@ def right_left(tri, x):
         left += 1
 
     return right == 2 and left == 1 or right == 1 and left == 2
-
-
-tris = [{'tri': 7, 'dot0': {'dot': 6, 'x': 247, 'y': 91}, 'dot1': {'dot': 5, 'x': 206, 'y': 128}, 'dot2': {'dot': 4, 'x': 158, 'y': 102}}, {'tri': 11, 'dot0': {'dot': 10, 'x': 217, 'y': 146}, 'dot1': {'dot': 9, 'x': 153, 'y': 182}, 'dot2': {'dot': 8, 'x': 116, 'y': 140}}, {
-    'tri': 15, 'dot0': {'dot': 14, 'x': 106, 'y': 113}, 'dot1': {'dot': 13, 'x': 111, 'y': 86}, 'dot2': {'dot': 12, 'x': 50, 'y': 113}}, {'tri': 19, 'dot0': {'dot': 18, 'x': 111, 'y': 195}, 'dot1': {'dot': 17, 'x': 108, 'y': 167}, 'dot2': {'dot': 16, 'x': 61, 'y': 179}}]
-
-dots = [{'dot': 1, 'x': 90, 'y': 254}, {
-    'dot': 2, 'x': 76, 'y': 64}, {'dot': 3, 'x': 215, 'y': 65}]
-
-
-lines = []
-
-canv = 1
-size = 3
-
-compute(dots, tris, lines, canv, size)

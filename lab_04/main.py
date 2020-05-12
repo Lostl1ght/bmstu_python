@@ -1,5 +1,6 @@
 from tkinter import Tk, Frame, Canvas, Label, Entry, Button, CENTER
 from cnvs import *
+from mth import *
 
 
 def main(size):
@@ -21,7 +22,7 @@ def main(size):
     canv = Canvas(canv_frame, height=size, width=size, bg='green')
     canv.grid()
     canv.bind('<Button-1>', lambda event: draw_mouse(error_lbl,
-                                                     event, mode, canv, dots, tris, dots_tri))
+                                                     event, mode, canv, dots, tris, dots_tri, lines))
     canv.bind('<Button-3>', lambda event: delete(error_lbl,
                                                  mode, canv, dots, tris, dots_tri))
 
@@ -42,14 +43,15 @@ def main(size):
     y_entry.place(x=50, y=150, anchor=CENTER, width=75)
 
     inpt_btn = Button(input_frame, text='Input', command=lambda: draw_key(
-        error_lbl, x_entry, y_entry, mode, canv, dots, tris, dots_tri, size))
+        error_lbl, x_entry, y_entry, mode, canv, dots, tris, dots_tri, size, lines))
     inpt_btn.place(x=50, y=175, anchor=CENTER, width=50)
 
     mode_btn = Button(input_frame, text='Switch mode',
                       command=lambda: switch_mode(mode, mode_lbl))
     mode_btn.place(x=50, y=225, anchor=CENTER, width=80)
 
-    comp_btn = Button(input_frame, text='Compute')
+    comp_btn = Button(input_frame, text='Compute',
+                      command=lambda: compute(dots, tris, lines, canv, size))
     comp_btn.place(x=50, y=250, anchor=CENTER, width=80)
 
     del_btn = Button(input_frame, text='Delete last', command=lambda: delete(

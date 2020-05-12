@@ -1,4 +1,5 @@
-def draw_mouse(error_lbl, event, mode, canv, dots, tris, dots_tri):
+def draw_mouse(error_lbl, event, mode, canv, dots, tris, dots_tri, lines):
+    clear_lines(canv, lines)
     error_lbl['text'] = ''
     x = event.x
     y = event.y
@@ -12,7 +13,8 @@ def draw_mouse(error_lbl, event, mode, canv, dots, tris, dots_tri):
         draw_tri(x, y, canv, tris, dots_tri)
 
 
-def draw_key(error_lbl, x_entry, y_entry, mode, canv, dots, tris, dots_tri, size):
+def draw_key(error_lbl, x_entry, y_entry, mode, canv, dots, tris, dots_tri, size, lines):
+    clear_lines(canv, lines)
     if key_check(error_lbl, x_entry, y_entry, size):
         return
     x = int(x_entry.get())
@@ -119,6 +121,12 @@ def clear(canv, dots, tris, dots_tri, lines):
     for i in range(len(tris)):
         canv.delete(tris[i]['tri'])
     tris.clear()
+    for i in range(len(lines)):
+        canv.delete(lines[i]['line'])
+    lines.clear()
+
+
+def clear_lines(canv, lines):
     for i in range(len(lines)):
         canv.delete(lines[i]['line'])
     lines.clear()
