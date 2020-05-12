@@ -1,20 +1,25 @@
 from tkinter import Tk, Frame, Canvas, Label, Entry, Button, CENTER
 from cnvs import *
+from mth import *
 
 
-def main():
+def main(maximum):
+    minimum = 400
+    if maximum < minimum:
+        print('Fuck you!')
+        return
     window = Tk()
     window.resizable(0, 0)
     window.title('Dots and triangles')
 
-    canv_frame = Frame(window, height=400, width=400)
-    input_frame = Frame(window, height=400, width=100)
+    canv_frame = Frame(window, height=maximum, width=maximum)
+    input_frame = Frame(window, height=maximum, width=100)
     input_frame.grid(row=0, column=0)
     canv_frame.grid(row=0, column=1)
 
     mode = ['tri']
 
-    canv = Canvas(canv_frame, height=400, width=400, bg='green')
+    canv = Canvas(canv_frame, height=maximum, width=maximum, bg='green')
     canv.grid()
     canv.bind('<Button-1>', lambda event: draw_mouse(error_lbl,
                                                      event, mode, canv, dots, tris, dots_tri))
@@ -63,6 +68,6 @@ if __name__ == '__main__':
     dots = []
     tris = []
     dots_tri = []
-    maximum = 400
+    maximum = 400  # Not less than 400.
     lines = []
-    main()
+    main(maximum)
