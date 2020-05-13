@@ -1,53 +1,72 @@
 from random import randint
 import pygame
+
+
+class Car:    
+    EMPTY = pygame.Color(0, 0, 0, 0)
+    l = 1
+    def __init__(self, x, y, carcass, wheel1, wheel2):
+        self.car = pygame.image.load(carcass).convert_alpha()
+
+        self.base_surf = pygame.Surface((self.car.get_width(), self.car.get_height()), flags=pygame.SRCALPHA)
+        self.base_surf_rect = self.base_surf.get_rect(topleft=(x, y))
+
+        self.wheel1 = [pygame.image.load(wheel1).convert_alpha(), pygame.image.load(wheel2).convert_alpha()]
+        self.wheel1_rect = [self.wheel1[0].get_rect(center=(40, 75)), self.wheel1[1].get_rect(center=(40, 75))]
+
+        self.wheel2 = [pygame.image.load(wheel1).convert_alpha(), pygame.image.load(wheel2).convert_alpha()]
+        self.wheel2_rect = [self.wheel2[0].get_rect(center=(170, 75)), self.wheel2[1].get_rect(center=(170, 75))]
+
+        self.base_surf.fill(self.EMPTY)
+        self.base_surf.blit(self.car, (0, 0))
+        self.base_surf.blit(self.wheel1[0], self.wheel1_rect[0])
+
+    def move(self, dist):
+        if self.base_surf_rect.x < dist - self.car.get_width():
+            self.base_surf_rect.x += 5
+        else:
+            self.base_surf_rect.x = 0
+        
+        self.base_surf.fill(self.EMPTY)
+
+        self.base_surf.blit(self.car, (0, 0))
+        self.base_surf.blit(self.wheel2[self.l], self.wheel2_rect[self.l])
+        self.base_surf.blit(self.wheel1[self.l], self.wheel1_rect[self.l])
+        self.l = (self.l + 1) % 2
+
+
+
 pygame.init()
 W = 600
-H = 100
+H = 200
 WHITE = (255, 255, 255)
- 
- 
+
 sc = pygame.display.set_mode((W, H))
 
-surf = pygame.Surface((231,96))
-surf_rect = surf.get_rect()
- 
-car = pygame.image.load('Car\car.png').convert_alpha()
+bg = pygame.Surface((W, H))
+bg_rect = bg.get_rect()
 
+car = Car(0, 90, 'moving_car\car.png', 'moving_car\wheel1.png', 'moving_car\wheel2.png')
 
-wheel1 = [pygame.image.load('Car\wheel1.png').convert_alpha(), pygame.image.load('Car\wheel2.png').convert_alpha()]
-wheel1_rect = [wheel1[0].get_rect(center=(40, 70)), wheel1[1].get_rect(center=(40, 70))]
- 
-sc.fill(WHITE)
-surf.fill(WHITE)
-
-surf.blit(car, (0, 0))
-surf.blit(wheel1[0], wheel1_rect[0])
-sc.blit(surf, surf_rect)
-
+bg.fill(WHITE)
+bg.blit(car.base_surf, car.base_surf_rect)
+sc.blit(bg, bg_rect)
 
 pygame.display.update()
-l = 1
- 
-while True:    
-    pygame.time.delay(50)
+
+while True:
+    pygame.time.delay(25)
 
     for i in pygame.event.get():
         if i.type == pygame.QUIT:
             exit()
 
     sc.fill(WHITE)
-    surf.fill(WHITE)
+    bg.fill(WHITE)
 
-    surf.blit(car, (0, 0))
-    surf.blit(wheel1[l], wheel1_rect[l])
-    sc.blit(surf, surf_rect)
-    l += 1
-    l %= 2
+    car.move(W)
 
+    bg.blit(car.base_surf, car.base_surf_rect)
+    sc.blit(bg, bg_rect)
 
-    if surf_rect.x < W - 150:
-        surf_rect.x += 5
-    else:
-        surf_rect.x = 0
-    
     pygame.display.update()
