@@ -79,6 +79,12 @@ class Man:
                       pygame.image.load(man_images + '\_right2.png').convert_alpha()]
         self.right_rect = [self.right[0].get_rect(),
                            self.right[1].get_rect()]
+        
+
+        self.scratch = [pygame.image.load(man_images + '\scratch1.png').convert_alpha(),
+                      pygame.image.load(man_images + '\scratch2.png').convert_alpha()]
+        self.scratch_rect = [self.scratch[0].get_rect(),
+                             self.scratch[1].get_rect()]
 
     def place(self):
         if self.TICK != 4:
@@ -116,17 +122,30 @@ class Man:
         self.base_surf.blit(self.right[self.IMG], self.right_rect[self.IMG])
         self.IMG = (self.IMG + 1) % 2
 
+    def do_scratch(self):        
+        if self.TICK != 24 and self.TICK != 20:
+            return
+        
+        self.TICK = 21
+        self.base_surf.fill(self.EMPTY)
+        self.base_surf.blit(self.scratch[self.IMG], self.scratch_rect[self.IMG])
+        self.IMG = (self.IMG + 1) % 2
+
+
 
 pygame.init()
-W = 500
-H = 200
+W = 865
+H = 260
 WHITE = (255, 255, 255)
-DIST = 300
+DIST = 500
 
 sc = pygame.display.set_mode((W, H))
 
 bg = pygame.Surface((W, H))
 bg_rect = bg.get_rect()
+
+road = pygame.image.load('bg.png').convert_alpha()
+road_rect = road.get_rect()
 
 car = Car(0, 90, 'moving_car', 'car_crash')
 man = Man(DIST - car.car.get_width() + 90, 90, 'walk')
@@ -159,6 +178,7 @@ while True:
         man.move_left(DIST - car.car.get_width() - 35)
         man.move_ahead()
         man.move_right(DIST - car.car.get_width() + 60)
+        man.do_scratch()
 
         
         if man.TICK < 16:
