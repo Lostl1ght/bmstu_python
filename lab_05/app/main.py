@@ -12,7 +12,7 @@ class Car:
 
         self.base_surf = pygame.Surface((self.car.get_width(),
                                          self.car.get_height()), flags=pygame.SRCALPHA)
-        self.base_surf_rect = self.base_surf.get_rect(topleft=(x, y))
+        self.base_surf_rect = self.base_surf.get_rect(bottomleft=(x, y))
 
         self.wheel1 = [pygame.image.load(car_images + '\wheel1.png').convert_alpha(),
                        pygame.image.load(car_images + '\wheel2.png').convert_alpha()]
@@ -63,7 +63,7 @@ class Man:
 
         self.base_surf = pygame.Surface((self.man.get_width(),
                                          self.man.get_height()), flags=pygame.SRCALPHA)
-        self.base_surf_rect = self.base_surf.get_rect(topleft=(x, y))
+        self.base_surf_rect = self.base_surf.get_rect(bottomleft=(x, y))
 
         self.ahead = [pygame.image.load(man_images + '\_ahead1.png').convert_alpha(),
                       pygame.image.load(man_images + '\_ahead2.png').convert_alpha()]
@@ -103,9 +103,14 @@ class Man:
         self.base_surf.blit(self.left[self.IMG], self.left_rect[self.IMG])
         self.IMG = (self.IMG + 1) % 2
 
-    def move_ahead(self):
-        if self.TICK != 12 and self.TICK != 15:
+    def move_ahead(self, dist):
+        if self.TICK != 12:
             return
+        
+        if self.base_surf_rect.y > dist:
+            return
+        self.TICK = 9
+        self.base_surf_rect.y += 3
 
         self.base_surf.fill(self.EMPTY)
         self.base_surf.blit(self.ahead[self.IMG], self.ahead_rect[self.IMG])
@@ -137,7 +142,7 @@ pygame.init()
 W = 865
 H = 260
 WHITE = (255, 255, 255)
-DIST = 500
+DIST = 640
 
 sc = pygame.display.set_mode((W, H))
 
@@ -147,8 +152,8 @@ bg_rect = bg.get_rect()
 road = pygame.image.load('bg.png').convert_alpha()
 road_rect = road.get_rect()
 
-car = Car(0, 90, 'moving_car', 'car_crash')
-man = Man(DIST - car.car.get_width() + 90, 90, 'walk')
+car = Car(0, 240, 'moving_car', 'car_crash')
+man = Man(DIST - car.car.get_width() + 90, 230, 'walk')
 
 bg.fill(WHITE)
 bg.blit(car.base_surf, car.base_surf_rect)
@@ -165,18 +170,18 @@ while True:
 
     sc.fill(WHITE)
     bg.fill(WHITE)
+    bg.blit(road, road_rect)
 
     if car.base_surf_rect.x < DIST - car.car.get_width():
         car.move()
         bg.blit(car.base_surf, car.base_surf_rect)
-        sc.blit(bg, bg_rect)
     else:
         car.burn()
 
         man.TICK += 1
         man.place()
         man.move_left(DIST - car.car.get_width() - 35)
-        man.move_ahead()
+        man.move_ahead(150)
         man.move_right(DIST - car.car.get_width() + 60)
         man.do_scratch()
 
@@ -187,7 +192,7 @@ while True:
         else:
             bg.blit(car.base_surf, car.base_surf_rect)
             bg.blit(man.base_surf, man.base_surf_rect)
-
-        sc.blit(bg, bg_rect)
+    
+    sc.blit(bg, bg_rect)
 
     pygame.display.update()
