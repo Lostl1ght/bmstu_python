@@ -85,7 +85,7 @@ class Man:
             return
         self.base_surf.fill(self.EMPTY)
         self.base_surf.blit(self.man, (0, 0))
-    
+
     def move_left(self, dist):
         if self.TICK != 8:
             return
@@ -97,13 +97,23 @@ class Man:
         self.base_surf.blit(self.left[self.IMG], self.left_rect[self.IMG])
         self.IMG = (self.IMG + 1) % 2
 
-    def move_ahead(self):        
-        if self.TICK != 12:
+    def move_ahead(self):
+        if self.TICK != 12 and self.TICK != 15:
             return
-        
-        self.TICK = 9
+
         self.base_surf.fill(self.EMPTY)
         self.base_surf.blit(self.ahead[self.IMG], self.ahead_rect[self.IMG])
+        self.IMG = (self.IMG + 1) % 2
+
+    def move_right(self, dist):
+        if self.TICK != 19:
+            return
+        if self.base_surf_rect.x > dist:
+            return
+        self.base_surf_rect.x += 10
+        self.TICK = 16
+        self.base_surf.fill(self.EMPTY)
+        self.base_surf.blit(self.right[self.IMG], self.right_rect[self.IMG])
         self.IMG = (self.IMG + 1) % 2
 
 
@@ -146,12 +156,18 @@ while True:
 
         man.TICK += 1
         man.place()
-        man.move_left(DIST - car.car.get_width() - 40)
+        man.move_left(DIST - car.car.get_width() - 35)
         man.move_ahead()
-        # man.move_right()
+        man.move_right(DIST - car.car.get_width() + 60)
 
-        bg.blit(man.base_surf, man.base_surf_rect)
-        bg.blit(car.base_surf, car.base_surf_rect)
+        
+        if man.TICK < 16:
+            bg.blit(man.base_surf, man.base_surf_rect)
+            bg.blit(car.base_surf, car.base_surf_rect)
+        else:
+            bg.blit(car.base_surf, car.base_surf_rect)
+            bg.blit(man.base_surf, man.base_surf_rect)
+
         sc.blit(bg, bg_rect)
 
     pygame.display.update()
