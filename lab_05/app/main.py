@@ -79,10 +79,9 @@ class Man:
                       pygame.image.load(man_images + '\_right2.png').convert_alpha()]
         self.right_rect = [self.right[0].get_rect(),
                            self.right[1].get_rect()]
-        
 
         self.scratch = [pygame.image.load(man_images + '\scratch1.png').convert_alpha(),
-                      pygame.image.load(man_images + '\scratch2.png').convert_alpha()]
+                        pygame.image.load(man_images + '\scratch2.png').convert_alpha()]
         self.scratch_rect = [self.scratch[0].get_rect(),
                              self.scratch[1].get_rect()]
 
@@ -106,7 +105,7 @@ class Man:
     def move_ahead(self, dist):
         if self.TICK != 12:
             return
-        
+
         if self.base_surf_rect.y > dist:
             return
         self.TICK = 9
@@ -127,15 +126,15 @@ class Man:
         self.base_surf.blit(self.right[self.IMG], self.right_rect[self.IMG])
         self.IMG = (self.IMG + 1) % 2
 
-    def do_scratch(self):        
+    def do_scratch(self):
         if self.TICK != 24 and self.TICK != 20:
             return
-        
+
         self.TICK = 21
         self.base_surf.fill(self.EMPTY)
-        self.base_surf.blit(self.scratch[self.IMG], self.scratch_rect[self.IMG])
+        self.base_surf.blit(self.scratch[self.IMG],
+                            self.scratch_rect[self.IMG])
         self.IMG = (self.IMG + 1) % 2
-
 
 
 pygame.init()
@@ -185,14 +184,13 @@ while True:
         man.move_right(DIST - car.car.get_width() + 60)
         man.do_scratch()
 
-        
         if man.TICK < 16:
             bg.blit(man.base_surf, man.base_surf_rect)
             bg.blit(car.base_surf, car.base_surf_rect)
         else:
             bg.blit(car.base_surf, car.base_surf_rect)
             bg.blit(man.base_surf, man.base_surf_rect)
-    
+
     sc.blit(bg, bg_rect)
 
     pygame.display.update()
