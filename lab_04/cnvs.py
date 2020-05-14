@@ -48,20 +48,20 @@ def delete(error_lbl, mode, canv, dots, tris, dots_tri, lines):
 
 def draw_point(x, y, canv, dots):
     dot = canv.create_oval(x, y, x + 3,
-                           y + 3, width=0, fill='white')
+                           y + 3, width=0, fill='red')
     dots.append(dict(dot=dot, x=x, y=y))
     print(dots)
 
 
 def draw_tri(x, y, canv, tris, dots_tri):
-    dot = canv.create_oval(x, y, x + 3, y + 3, width=0, fill='white')
+    dot = canv.create_oval(x, y, x + 3, y + 3, width=0, fill='yellow')
     dots_tri.append(dict(dot=dot, x=x, y=y))
     print(dots_tri)
     if len(dots_tri) % 3 == 0:
         i = len(dots_tri) - 1
         tpl = (dots_tri[i]['x'], dots_tri[i]['y'], dots_tri[i - 1]['x'], dots_tri[i - 1]['y'],
                dots_tri[i - 2]['x'], dots_tri[i - 2]['y'], dots_tri[i]['x'], dots_tri[i]['y'])
-        triangle = canv.create_line(tpl, fill='white')
+        triangle = canv.create_line(tpl, fill='yellow')
         tris.append(
             dict(tri=triangle, dot0=dots_tri[i], dot1=dots_tri[i - 1], dot2=dots_tri[i - 2]))
         print(tris)
@@ -112,7 +112,8 @@ def same_check(error_lbl, x, y, points):
     return False
 
 
-def clear(canv, dots, tris, dots_tri, lines):
+def clear(canv, dots, tris, dots_tri, lines, error_lbl):
+    error_lbl['text'] = ''
     for i in range(len(dots)):
         canv.delete(dots[i]['dot'])
     dots.clear()
@@ -140,5 +141,5 @@ def draw_lines(canv, ks_bs, size, lines):
         x2 = size + 10
         y2 = ks_bs[i]['k'] * x2 + ks_bs[i]['b']
 
-        line = canv.create_line(x1, y1, x2, y2, width=0, fill='white')
+        line = canv.create_line(x1, y1, x2, y2, width=0, fill='red')
         lines.append(dict(line=line, k=ks_bs[i]['k'], b=ks_bs[i]['b']))

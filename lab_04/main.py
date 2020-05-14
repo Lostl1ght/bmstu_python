@@ -32,12 +32,12 @@ def main():
     error_lbl = Label(input_frame, text='')
     error_lbl.place(x=50, y=375, anchor=CENTER, width=85)
 
-    x_lbl = Label(input_frame, text='Input X', bg='white')
+    x_lbl = Label(input_frame, text='Input X')
     x_lbl.place(x=50, y=75, anchor=CENTER, width=75)
     x_entry = Entry(input_frame, justify=CENTER)
     x_entry.place(x=50, y=100, anchor=CENTER, width=75)
 
-    y_lbl = Label(input_frame, text='Input Y', bg='white')
+    y_lbl = Label(input_frame, text='Input Y')
     y_lbl.place(x=50, y=125, anchor=CENTER, width=75)
     y_entry = Entry(input_frame, justify=CENTER)
     y_entry.place(x=50, y=150, anchor=CENTER, width=75)
@@ -59,7 +59,7 @@ def main():
     del_btn.place(x=50, y=300, anchor=CENTER, width=80)
 
     clear_btn = Button(input_frame, text='Clear', command=lambda: clear(
-        canv, dots, tris, dots_tri, lines))
+        canv, dots, tris, dots_tri, lines, error_lbl))
     clear_btn.place(x=50, y=325, anchor=CENTER, width=80)
 
     window.mainloop()
@@ -69,6 +69,6 @@ if __name__ == '__main__':
     dots = []
     tris = []
     dots_tri = []
-    size = 400  # Not less than 400.
+    size = 800  # Not less than 400.
     lines = []
     main()
