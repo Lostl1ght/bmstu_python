@@ -136,10 +136,16 @@ def clear_lines(canv, lines):
 
 def draw_lines(canv, ks_bs, size, lines):
     for i in range(len(ks_bs)):
-        x1 = -10
-        y1 = ks_bs[i]['k'] * x1 + ks_bs[i]['b']
-        x2 = size + 10
-        y2 = ks_bs[i]['k'] * x2 + ks_bs[i]['b']
+        if ks_bs[i]['b'] is None:
+            x1 = ks_bs[i]['k']
+            y1 = -10
+            x2 = ks_bs[i]['k']
+            y2 = size + 10
+        else:
+            x1 = -10
+            y1 = ks_bs[i]['k'] * x1 + ks_bs[i]['b']
+            x2 = size + 10
+            y2 = ks_bs[i]['k'] * x2 + ks_bs[i]['b']
 
         line = canv.create_line(x1, y1, x2, y2, width=0, fill='red')
         lines.append(dict(line=line, k=ks_bs[i]['k'], b=ks_bs[i]['b']))

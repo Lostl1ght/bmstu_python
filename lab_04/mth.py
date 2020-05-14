@@ -17,6 +17,8 @@ def all_maxs(dots, tris, max_count):
             for j in range(i + 1, len(dots)):
                 if dots[i]['x'] - dots[j]['x'] == 0:
                     count = find_if_0(dots[i]['x'], tris)
+                    k = dots[i]['x']
+                    b = None
                 else:
                     k = (dots[i]['y'] - dots[j]['y']) / \
                         (dots[i]['x'] - dots[j]['x'])
